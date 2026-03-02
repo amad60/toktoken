@@ -10,6 +10,8 @@ import { ActivityLogs } from "@/components/ActivityLogs";
 import { MathGate } from "@/components/MathGate";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 function fireConfetti() {
   confetti({
@@ -24,6 +26,11 @@ const Index = () => {
   const [data, setData] = useState<AppData>(loadData);
 
   const selectedChild = data.children.find((c) => c.id === data.selectedChildId);
+  const hasChildren = data.children.length > 0;
+
+  // onboarding add child dialog
+  const [onboardOpen, setOnboardOpen] = useState(false);
+  const [onboardName, setOnboardName] = useState("");
 
   // confirm use token
   const [confirmActivity, setConfirmActivity] = useState<Activity | null>(null);
@@ -51,6 +58,14 @@ const Index = () => {
 
   const handleAddChild = (name: string) => {
     update(addChild(data, name));
+  };
+
+  const handleOnboardAdd = () => {
+    if (onboardName.trim()) {
+      handleAddChild(onboardName.trim());
+      setOnboardName("");
+      setOnboardOpen(false);
+    }
   };
 
   const handleUseToken = (activity: Activity) => {
@@ -108,13 +123,61 @@ const Index = () => {
     setEditingActivity(null);
   };
 
+  // Onboarding empty state
+  if (!hasChildren) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
+        <div className="flex flex-col items-center gap-4 max-w-xs text-center">
+          <span className="text-7xl">🎟️</span>
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">
+            Welcome to Toktok Token
+          </h1>
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            Create your first child to start learning to choose.
+          </p>
+          <Button
+            onClick={() => setOnboardOpen(true)}
+            className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 font-bold h-12 text-base btn-press mt-2"
+          >
+            <Plus className="h-5 w-5 mr-2" />
+            Add Child
+          </Button>
+        </div>
+
+        <Dialog open={onboardOpen} onOpenChange={setOnboardOpen}>
+          <DialogContent className="rounded-2xl bg-card mx-4 w-[90vw] max-w-[480px]">
+            <DialogHeader>
+              <DialogTitle className="text-foreground">Add Child</DialogTitle>
+            </DialogHeader>
+            <Input
+              placeholder="Child's name"
+              value={onboardName}
+              onChange={(e) => setOnboardName(e.target.value)}
+              className="rounded-xl bg-muted text-foreground"
+              onKeyDown={(e) => e.key === "Enter" && handleOnboardAdd()}
+              autoFocus
+            />
+            <Button onClick={handleOnboardAdd} className="rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 btn-press">
+              Add
+            </Button>
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background pb-8">
-      {/* Header */}
-      <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-md border-b border-border px-4 py-3">
-        <h1 className="text-center font-extrabold text-xl text-foreground tracking-tight mb-3">
-          🪙 Toktok Token
-        </h1>
+      {/* Hero header with subtle gradient */}
+      <header className="sticky top-0 z-10 border-b border-border px-4 py-4"
+        style={{ background: "linear-gradient(135deg, hsl(210 70% 95%), hsl(150 50% 95%))" }}
+      >
+        <div className="flex items-center justify-center gap-2 mb-3">
+          <span className="text-2xl">🎟️</span>
+          <h1 className="font-extrabold text-xl text-foreground tracking-tight">
+            Toktok Token
+          </h1>
+        </div>
         <ChildSelector
           children={data.children}
           selectedId={data.selectedChildId}
@@ -126,7 +189,7 @@ const Index = () => {
       {/* Content */}
       <main className="container max-w-lg mx-auto px-4 pt-5">
         {selectedChild && selectedChild.activities.length > 0 ? (
-          <div className="grid gap-4">
+          <div className="grid grid-cols-2 gap-3">
             {selectedChild.activities.map((act) => (
               <ActivityCard
                 key={act.id}
@@ -147,7 +210,7 @@ const Index = () => {
 
         <Button
           onClick={handleAddActivity}
-          className="w-full mt-6 rounded-xl bg-secondary text-secondary-foreground hover:bg-secondary/80 font-bold h-12 text-base"
+          className="w-full mt-6 rounded-xl bg-secondary text-secondary-foreground hover:bg-secondary/80 font-bold h-12 text-base btn-press"
         >
           <Plus className="h-5 w-5 mr-2" />
           Add Activity

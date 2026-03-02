@@ -6,33 +6,33 @@
 
 @layer base {
   :root {
-    --background: 210 40% 96%;
-    --foreground: 220 30% 25%;
+    --background: 0 0% 100%;
+    --foreground: 220 30% 20%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 30% 25%;
+    --card-foreground: 220 30% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 30% 25%;
+    --popover-foreground: 220 30% 20%;
 
-    --primary: 210 70% 72%;
-    --primary-foreground: 220 40% 20%;
+    --primary: 210 70% 65%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 150 50% 72%;
-    --secondary-foreground: 160 40% 20%;
+    --secondary: 150 50% 65%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 30% 92%;
+    --muted: 210 30% 96%;
     --muted-foreground: 220 15% 50%;
 
     --accent: 35 90% 75%;
     --accent-foreground: 35 60% 25%;
 
-    --destructive: 0 65% 65%;
+    --destructive: 0 60% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 25% 88%;
-    --input: 210 25% 88%;
-    --ring: 210 70% 72%;
+    --border: 210 20% 92%;
+    --input: 210 20% 92%;
+    --ring: 210 70% 65%;
 
     --radius: 1rem;
 
@@ -56,5 +56,11 @@
     @apply bg-background text-foreground font-nunito;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer utilities {
+  .btn-press {
+    @apply transition-transform duration-100 active:scale-95;
   }
 }

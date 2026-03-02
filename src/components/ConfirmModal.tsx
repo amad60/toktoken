@@ -11,7 +11,7 @@ interface Props {
 export function ConfirmModal({ open, activityName, onConfirm, onCancel }: Props) {
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) onCancel(); }}>
-      <DialogContent className="rounded-2xl bg-card mx-4 max-w-sm">
+      <DialogContent className="rounded-2xl bg-card mx-4 w-[90vw] max-w-[480px]">
         <DialogHeader>
           <DialogTitle className="text-foreground">Use Token?</DialogTitle>
         </DialogHeader>
@@ -22,7 +22,7 @@ export function ConfirmModal({ open, activityName, onConfirm, onCancel }: Props)
           <Button variant="outline" onClick={onCancel} className="flex-1 rounded-xl">
             Cancel
           </Button>
-          <Button onClick={onConfirm} className="flex-1 rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 font-bold">
+          <Button onClick={onConfirm} className="flex-1 rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 font-bold btn-press">
             Confirm
           </Button>
         </div>

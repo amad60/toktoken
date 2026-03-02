@@ -6,47 +6,8 @@ function generateId(): string {
   return Math.random().toString(36).substring(2, 10);
 }
 
-function createDemoData(): AppData {
-  const childId = generateId();
-  const today = new Date().toISOString().split("T")[0];
-  const child: Child = {
-    id: childId,
-    name: "Alex",
-    activities: [
-      {
-        id: generateId(),
-        name: "Play PS",
-        icon: "🎮",
-        periodType: "weekly",
-        totalQuota: 2,
-        remainingQuota: 2,
-        durationText: "1 hour per use",
-        logs: [],
-        lastResetDate: today,
-      },
-      {
-        id: generateId(),
-        name: "Sleep Together",
-        icon: "🛏️",
-        periodType: "weekly",
-        totalQuota: 3,
-        remainingQuota: 3,
-        logs: [],
-        lastResetDate: today,
-      },
-      {
-        id: generateId(),
-        name: "Laptop Game",
-        icon: "💻",
-        periodType: "monthly",
-        totalQuota: 5,
-        remainingQuota: 5,
-        logs: [],
-        lastResetDate: today,
-      },
-    ],
-  };
-  return { children: [child], selectedChildId: childId };
+function createEmptyData(): AppData {
+  return { children: [], selectedChildId: "" };
 }
 
 function getMonday(date: Date): Date {
@@ -103,9 +64,9 @@ export function loadData(): AppData {
       return applyResets(data);
     }
   } catch {}
-  const demo = createDemoData();
-  saveData(demo);
-  return demo;
+  const empty = createEmptyData();
+  saveData(empty);
+  return empty;
 }
 
 export function saveData(data: AppData): void {
