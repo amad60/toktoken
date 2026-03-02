@@ -16,7 +16,7 @@ export function ActivityCard({ activity, onUseToken, onViewHistory, onEdit }: Pr
 
   return (
     <div
-      className={`bg-card rounded-2xl p-4 shadow-[0_2px_12px_-4px_hsl(210_30%_80%/0.5)] border border-border animate-bounce-in flex flex-col items-center gap-2 transition-opacity ${isEmpty ? "opacity-60" : ""}`}
+      className={`bg-card rounded-2xl p-4 shadow-[0_2px_12px_-4px_hsl(210_30%_80%/0.5)] border border-border animate-bounce-in flex flex-col items-center gap-2 transition-opacity min-h-0 ${isEmpty ? "opacity-60" : ""}`}
     >
       <button onClick={onEdit} className="flex flex-col items-center gap-1 w-full btn-press">
         <span className="text-5xl leading-none">{icon}</span>

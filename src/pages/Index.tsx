@@ -145,7 +145,7 @@ const Index = () => {
         </div>
 
         <Dialog open={onboardOpen} onOpenChange={setOnboardOpen}>
-          <DialogContent className="rounded-2xl bg-card mx-4 w-[90vw] max-w-[480px]">
+          <DialogContent className="bg-card">
             <DialogHeader>
               <DialogTitle className="text-foreground">Add Child</DialogTitle>
             </DialogHeader>
@@ -187,9 +187,19 @@ const Index = () => {
       </header>
 
       {/* Content */}
-      <main className="container max-w-lg mx-auto px-4 pt-5">
+      <main className="container max-w-lg mx-auto px-4 pt-4">
+        {selectedChild && (
+          <Button
+            onClick={handleAddActivity}
+            className="w-full rounded-xl bg-secondary text-secondary-foreground hover:bg-secondary/80 font-bold h-12 text-base btn-press mb-4"
+          >
+            <Plus className="h-5 w-5 mr-2" />
+            Add Activity
+          </Button>
+        )}
+
         {selectedChild && selectedChild.activities.length > 0 ? (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 auto-rows-fr">
             {selectedChild.activities.map((act) => (
               <ActivityCard
                 key={act.id}
@@ -207,14 +217,6 @@ const Index = () => {
             <p className="text-muted-foreground text-sm">Add one to get started!</p>
           </div>
         )}
-
-        <Button
-          onClick={handleAddActivity}
-          className="w-full mt-6 rounded-xl bg-secondary text-secondary-foreground hover:bg-secondary/80 font-bold h-12 text-base btn-press"
-        >
-          <Plus className="h-5 w-5 mr-2" />
-          Add Activity
-        </Button>
       </main>
 
       {/* Modals */}
