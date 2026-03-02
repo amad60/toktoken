@@ -45,7 +45,7 @@ export function ActivityForm({ open, onClose, onSave, onDelete, initial }: Props
 
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
-      <DialogContent className="rounded-2xl bg-card mx-4 w-[90vw] max-w-[480px] max-h-[90vh] overflow-y-auto p-5">
+      <DialogContent className="bg-card max-h-[90vh] overflow-y-auto p-5">
         <DialogHeader>
           <DialogTitle className="text-foreground">{initial ? "Edit Activity" : "Add Activity"}</DialogTitle>
         </DialogHeader>

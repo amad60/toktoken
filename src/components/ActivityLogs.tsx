@@ -17,7 +17,7 @@ export function ActivityLogs({ open, onClose, activity }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
-      <DialogContent className="rounded-2xl bg-card mx-4 w-[90vw] max-w-[480px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-card max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-foreground">
             {activity.icon} {activity.name} — History
