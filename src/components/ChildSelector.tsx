@@ -25,10 +25,12 @@ export function ChildSelector({ children, selectedId, onSelect, onAddChild }: Pr
     }
   };
 
+  if (children.length === 0) return null;
+
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 bg-card rounded-2xl p-1.5 shadow-[0_2px_12px_-4px_hsl(210_30%_80%/0.5)]">
       <Select value={selectedId} onValueChange={onSelect}>
-        <SelectTrigger className="flex-1 bg-card text-card-foreground font-semibold text-lg rounded-xl border-border h-12">
+        <SelectTrigger className="flex-1 bg-muted text-foreground font-bold text-lg rounded-xl border-0 h-12 transition-all">
           <SelectValue />
         </SelectTrigger>
         <SelectContent className="bg-card rounded-xl">
@@ -42,13 +44,13 @@ export function ChildSelector({ children, selectedId, onSelect, onAddChild }: Pr
       <Button
         size="icon"
         onClick={() => setOpen(true)}
-        className="h-12 w-12 rounded-xl bg-secondary text-secondary-foreground hover:bg-secondary/80 shrink-0"
+        className="h-12 w-12 rounded-xl bg-secondary text-secondary-foreground hover:bg-secondary/80 shrink-0 btn-press"
       >
         <Plus className="h-5 w-5" />
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="rounded-2xl bg-card mx-4 max-w-sm">
+        <DialogContent className="rounded-2xl bg-card mx-4 w-[90vw] max-w-[480px]">
           <DialogHeader>
             <DialogTitle className="text-foreground">Add Child</DialogTitle>
           </DialogHeader>
@@ -59,7 +61,7 @@ export function ChildSelector({ children, selectedId, onSelect, onAddChild }: Pr
             className="rounded-xl bg-muted text-foreground"
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
           />
-          <Button onClick={handleAdd} className="rounded-xl bg-primary text-primary-foreground hover:bg-primary/80">
+          <Button onClick={handleAdd} className="rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 btn-press">
             Add
           </Button>
         </DialogContent>

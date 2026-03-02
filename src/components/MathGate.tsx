@@ -34,7 +34,7 @@ export function MathGate({ open, onPass, onCancel }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) { setAnswer(""); setError(false); onCancel(); } }}>
-      <DialogContent className="rounded-2xl bg-card mx-4 max-w-sm">
+      <DialogContent className="rounded-2xl bg-card mx-4 w-[90vw] max-w-[480px]">
         <DialogHeader>
           <DialogTitle className="text-foreground">Parent Verification</DialogTitle>
         </DialogHeader>

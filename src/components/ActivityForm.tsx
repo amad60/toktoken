@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Activity, EMOJI_LIST } from "@/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -15,11 +15,22 @@ interface Props {
 }
 
 export function ActivityForm({ open, onClose, onSave, onDelete, initial }: Props) {
-  const [name, setName] = useState(initial?.name ?? "");
-  const [icon, setIcon] = useState(initial?.icon ?? "🎮");
-  const [periodType, setPeriodType] = useState<"weekly" | "monthly">(initial?.periodType ?? "weekly");
-  const [quota, setQuota] = useState(String(initial?.totalQuota ?? 3));
-  const [duration, setDuration] = useState(initial?.durationText ?? "");
+  const [name, setName] = useState("");
+  const [icon, setIcon] = useState("🎮");
+  const [periodType, setPeriodType] = useState<"weekly" | "monthly">("weekly");
+  const [quota, setQuota] = useState("3");
+  const [duration, setDuration] = useState("");
+
+  // Reset form state every time the modal opens
+  useEffect(() => {
+    if (open) {
+      setName(initial?.name ?? "");
+      setIcon(initial?.icon ?? "🎮");
+      setPeriodType(initial?.periodType ?? "weekly");
+      setQuota(String(initial?.totalQuota ?? 3));
+      setDuration(initial?.durationText ?? "");
+    }
+  }, [open, initial]);
 
   const handleSave = () => {
     if (!name.trim() || !quota) return;
@@ -34,7 +45,7 @@ export function ActivityForm({ open, onClose, onSave, onDelete, initial }: Props
 
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
-      <DialogContent className="rounded-2xl bg-card mx-4 max-w-sm max-h-[90vh] overflow-y-auto">
+      <DialogContent className="rounded-2xl bg-card mx-4 w-[90vw] max-w-[480px] max-h-[90vh] overflow-y-auto p-5">
         <DialogHeader>
           <DialogTitle className="text-foreground">{initial ? "Edit Activity" : "Add Activity"}</DialogTitle>
         </DialogHeader>
@@ -46,8 +57,8 @@ export function ActivityForm({ open, onClose, onSave, onDelete, initial }: Props
                 <button
                   key={e}
                   onClick={() => setIcon(e)}
-                  className={`text-2xl w-10 h-10 rounded-lg flex items-center justify-center transition-all ${
-                    icon === e ? "bg-primary/30 ring-2 ring-primary" : "hover:bg-muted"
+                  className={`text-2xl w-10 h-10 rounded-lg flex items-center justify-center transition-all btn-press ${
+                    icon === e ? "bg-primary/20 ring-2 ring-primary" : "hover:bg-muted"
                   }`}
                 >
                   {e}
@@ -79,11 +90,11 @@ export function ActivityForm({ open, onClose, onSave, onDelete, initial }: Props
             <Label className="text-foreground text-sm font-semibold">Duration text (optional)</Label>
             <Input value={duration} onChange={(e) => setDuration(e.target.value)} className="rounded-xl bg-muted text-foreground mt-1" placeholder="e.g. 1 hour per use" />
           </div>
-          <Button onClick={handleSave} className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 font-bold h-11">
+          <Button onClick={handleSave} className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 font-bold h-11 btn-press">
             Save
           </Button>
           {onDelete && (
-            <Button variant="outline" onClick={onDelete} className="w-full rounded-xl text-destructive border-destructive hover:bg-destructive/10">
+            <Button variant="outline" onClick={onDelete} className="w-full rounded-xl text-destructive border-destructive hover:bg-destructive/10 btn-press">
               Delete Activity
             </Button>
           )}

@@ -15,48 +15,53 @@ export function ActivityCard({ activity, onUseToken, onViewHistory, onEdit }: Pr
   const isEmpty = remainingQuota === 0;
 
   return (
-    <div className="bg-card rounded-2xl p-5 shadow-sm border border-border animate-bounce-in flex flex-col gap-3">
-      <div className="flex items-center justify-between">
-        <button onClick={onEdit} className="flex items-center gap-3 min-w-0">
-          <span className="text-3xl">{icon}</span>
-          <div className="text-left min-w-0">
-            <h3 className="font-bold text-foreground text-base truncate">{name}</h3>
-            {durationText && (
-              <p className="text-xs text-muted-foreground">{durationText}</p>
-            )}
-          </div>
-        </button>
-        <button
-          onClick={onViewHistory}
-          className="text-xs text-muted-foreground underline shrink-0"
-        >
-          History
-        </button>
-      </div>
+    <div
+      className={`bg-card rounded-2xl p-4 shadow-[0_2px_12px_-4px_hsl(210_30%_80%/0.5)] border border-border animate-bounce-in flex flex-col items-center gap-2 transition-opacity ${isEmpty ? "opacity-60" : ""}`}
+    >
+      <button onClick={onEdit} className="flex flex-col items-center gap-1 w-full btn-press">
+        <span className="text-5xl leading-none">{icon}</span>
+        <h3 className="font-bold text-foreground text-sm truncate max-w-full">{name}</h3>
+        {durationText && (
+          <p className="text-[11px] text-muted-foreground">{durationText}</p>
+        )}
+      </button>
 
-      <div className="space-y-1.5">
-        <div className="flex justify-between text-sm">
-          <span className="font-semibold text-foreground">
+      <button
+        onClick={onViewHistory}
+        className="text-[11px] text-muted-foreground underline"
+      >
+        History
+      </button>
+
+      <div className="w-full space-y-1">
+        <div className="flex justify-between text-xs">
+          <span className="font-bold text-foreground">
             {remainingQuota} / {totalQuota}
           </span>
-          <span className="text-muted-foreground text-xs capitalize">
-            {periodType === "weekly" ? "Resets Monday" : "Resets 1st"}
+          <span className="text-muted-foreground capitalize text-[10px]">
+            {periodType === "weekly" ? "Mon reset" : "1st reset"}
           </span>
         </div>
-        <Progress value={progress} className="h-2.5 rounded-full bg-muted [&>div]:bg-primary [&>div]:rounded-full" />
+        <Progress
+          value={progress}
+          className={`h-2 rounded-full bg-muted ${isEmpty ? "[&>div]:bg-destructive" : "[&>div]:bg-secondary"} [&>div]:rounded-full`}
+        />
       </div>
 
       {isEmpty ? (
-        <p className="text-sm text-destructive font-medium text-center py-1">
-          No tokens left. Please wait for next period.
+        <p className="text-[11px] text-destructive font-semibold text-center leading-tight">
+          No tokens left
         </p>
       ) : (
-        <Button
-          onClick={onUseToken}
-          className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 font-bold text-base h-11"
-        >
-          Use Token
-        </Button>
+        <>
+          <p className="text-[11px] text-secondary font-medium">You still have choices ✨</p>
+          <Button
+            onClick={onUseToken}
+            className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 font-bold text-sm h-9 btn-press"
+          >
+            Use Token
+          </Button>
+        </>
       )}
     </div>
   );
