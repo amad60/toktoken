@@ -14,10 +14,24 @@ export interface Activity {
   lastResetDate: string; // ISO date string YYYY-MM-DD
 }
 
+export interface Chore {
+  id: string;
+  name: string;
+  icon: string;
+  rewardAmount: number;
+  periodType: "weekly" | "monthly";
+  totalCount: number;
+  remainingCount: number;
+  logs: ActivityLog[];
+  lastResetDate: string;
+}
+
 export interface Child {
   id: string;
   name: string;
   activities: Activity[];
+  earnCredits: number;
+  chores: Chore[];
 }
 
 export type AppData = {
@@ -30,4 +44,10 @@ export const EMOJI_LIST = [
   "⚽", "🏀", "🚴", "🛹", "🎯", "🧩", "📚", "✏️",
   "🍕", "🍦", "🧁", "🎂", "🛏️", "🧸", "🎪", "🏖️",
   "🌈", "⭐", "🎁", "🚀", "🦄", "🐶", "🐱", "🦋",
+];
+
+export const CHORE_EMOJI_LIST = [
+  "🧹", "🧺", "🍽️", "🛁", "📖", "🐕", "🌱", "🗑️",
+  "🛒", "✏️", "🧼", "👕", "🚿", "🪥", "🛏️", "📚",
+  "🍳", "🧽", "💪", "🌟", "🎯", "✅", "🏃", "🙏",
 ];

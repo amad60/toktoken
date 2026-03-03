@@ -1,15 +1,22 @@
 import { useState, useCallback } from "react";
 import confetti from "canvas-confetti";
-import { Activity, AppData } from "@/types";
-import { loadData, saveData, addChild, addActivity, updateActivity, deleteActivity, useToken } from "@/lib/storage";
+import { Activity, Chore, AppData } from "@/types";
+import {
+  loadData, saveData, addChild, addActivity, updateActivity, deleteActivity,
+  useToken, addChore, updateChore, deleteChore, completeChore, useEarnCredit,
+} from "@/lib/storage";
 import { ChildSelector } from "@/components/ChildSelector";
 import { ActivityCard } from "@/components/ActivityCard";
+import { ChoreCard } from "@/components/ChoreCard";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { ActivityForm } from "@/components/ActivityForm";
+import { ChoreForm } from "@/components/ChoreForm";
 import { ActivityLogs } from "@/components/ActivityLogs";
+import { ChoreLogs } from "@/components/ChoreLogs";
 import { MathGate } from "@/components/MathGate";
+import { InstallPrompt } from "@/components/InstallPrompt";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Star } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
@@ -22,22 +29,33 @@ function fireConfetti() {
   });
 }
 
+type TabMode = "spend" | "earn";
+
 const Index = () => {
   const [data, setData] = useState<AppData>(loadData);
+  const [tab, setTab] = useState<TabMode>("spend");
 
   const selectedChild = data.children.find((c) => c.id === data.selectedChildId);
   const hasChildren = data.children.length > 0;
 
-  // onboarding add child dialog
+  // onboarding
   const [onboardOpen, setOnboardOpen] = useState(false);
   const [onboardName, setOnboardName] = useState("");
 
   // confirm use token
   const [confirmActivity, setConfirmActivity] = useState<Activity | null>(null);
+  // confirm chore complete
+  const [confirmChore, setConfirmChore] = useState<Chore | null>(null);
+  // confirm earn credit use
+  const [earnCreditActivity, setEarnCreditActivity] = useState<Activity | null>(null);
 
   // activity form
   const [formOpen, setFormOpen] = useState(false);
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
+
+  // chore form
+  const [choreFormOpen, setChoreFormOpen] = useState(false);
+  const [editingChore, setEditingChore] = useState<Chore | null>(null);
 
   // math gate
   const [mathGateOpen, setMathGateOpen] = useState(false);
@@ -45,6 +63,7 @@ const Index = () => {
 
   // logs
   const [logsActivity, setLogsActivity] = useState<Activity | null>(null);
+  const [logsChore, setLogsChore] = useState<Chore | null>(null);
 
   const update = useCallback((newData: AppData) => {
     setData(newData);
@@ -68,18 +87,37 @@ const Index = () => {
     }
   };
 
-  const handleUseToken = (activity: Activity) => {
-    setConfirmActivity(activity);
-  };
+  // Activity token usage
+  const handleUseToken = (activity: Activity) => setConfirmActivity(activity);
 
   const handleConfirmUse = () => {
     if (!confirmActivity || !selectedChild) return;
-    const newData = useToken(data, selectedChild.id, confirmActivity.id);
-    update(newData);
+    update(useToken(data, selectedChild.id, confirmActivity.id));
     setConfirmActivity(null);
     fireConfetti();
   };
 
+  // Earn credit usage
+  const handleUseEarnCredit = (activity: Activity) => setEarnCreditActivity(activity);
+
+  const handleConfirmEarnCredit = () => {
+    if (!earnCreditActivity || !selectedChild) return;
+    update(useEarnCredit(data, selectedChild.id, earnCreditActivity.id));
+    setEarnCreditActivity(null);
+    fireConfetti();
+  };
+
+  // Chore completion
+  const handleCompleteChore = (chore: Chore) => setConfirmChore(chore);
+
+  const handleConfirmChore = () => {
+    if (!confirmChore || !selectedChild) return;
+    update(completeChore(data, selectedChild.id, confirmChore.id));
+    setConfirmChore(null);
+    fireConfetti();
+  };
+
+  // Math gate
   const requireMath = (action: () => void) => {
     setPendingAction(() => action);
     setMathGateOpen(true);
@@ -91,18 +129,13 @@ const Index = () => {
     setPendingAction(null);
   };
 
+  // Activity CRUD
   const handleAddActivity = () => {
-    requireMath(() => {
-      setEditingActivity(null);
-      setFormOpen(true);
-    });
+    requireMath(() => { setEditingActivity(null); setFormOpen(true); });
   };
 
   const handleEditActivity = (activity: Activity) => {
-    requireMath(() => {
-      setEditingActivity(activity);
-      setFormOpen(true);
-    });
+    requireMath(() => { setEditingActivity(activity); setFormOpen(true); });
   };
 
   const handleSaveActivity = (formData: { name: string; icon: string; periodType: "weekly" | "monthly"; totalQuota: number; durationText?: string }) => {
@@ -121,6 +154,33 @@ const Index = () => {
     update(deleteActivity(data, selectedChild.id, editingActivity.id));
     setFormOpen(false);
     setEditingActivity(null);
+  };
+
+  // Chore CRUD
+  const handleAddChore = () => {
+    requireMath(() => { setEditingChore(null); setChoreFormOpen(true); });
+  };
+
+  const handleEditChore = (chore: Chore) => {
+    requireMath(() => { setEditingChore(chore); setChoreFormOpen(true); });
+  };
+
+  const handleSaveChore = (formData: { name: string; icon: string; periodType: "weekly" | "monthly"; totalCount: number; rewardAmount: number }) => {
+    if (!selectedChild) return;
+    if (editingChore) {
+      update(updateChore(data, selectedChild.id, editingChore.id, formData));
+    } else {
+      update(addChore(data, selectedChild.id, formData));
+    }
+    setChoreFormOpen(false);
+    setEditingChore(null);
+  };
+
+  const handleDeleteChore = () => {
+    if (!selectedChild || !editingChore) return;
+    update(deleteChore(data, selectedChild.id, editingChore.id));
+    setChoreFormOpen(false);
+    setEditingChore(null);
   };
 
   // Onboarding empty state
@@ -162,21 +222,28 @@ const Index = () => {
             </Button>
           </DialogContent>
         </Dialog>
+        <InstallPrompt />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-background pb-8">
-      {/* Hero header with subtle gradient */}
-      <header className="sticky top-0 z-10 border-b border-border px-4 py-4"
-        style={{ background: "linear-gradient(135deg, hsl(210 70% 95%), hsl(150 50% 95%))" }}
+      {/* Sticky header */}
+      <header
+        className="sticky top-0 z-10 border-b border-border px-4 py-4 bg-background/95 backdrop-blur-sm shadow-[0_2px_12px_-4px_hsl(210_30%_80%/0.3)] transition-shadow"
+        style={{ background: "linear-gradient(135deg, hsl(210 70% 95% / 0.95), hsl(150 50% 95% / 0.95))" }}
       >
         <div className="flex items-center justify-center gap-2 mb-3">
           <span className="text-2xl">🎟️</span>
           <h1 className="font-extrabold text-xl text-foreground tracking-tight">
             Toktok Token
           </h1>
+          {selectedChild && selectedChild.earnCredits > 0 && (
+            <span className="ml-2 inline-flex items-center gap-1 bg-accent/20 text-accent-foreground text-xs font-bold px-2 py-0.5 rounded-full">
+              <Star className="h-3 w-3" /> {selectedChild.earnCredits}
+            </span>
+          )}
         </div>
         <ChildSelector
           children={data.children}
@@ -184,38 +251,115 @@ const Index = () => {
           onSelect={handleSelectChild}
           onAddChild={handleAddChild}
         />
+
+        {/* Spend / Earn toggle */}
+        {selectedChild && (
+          <div className="flex gap-2 mt-3">
+            <button
+              onClick={() => setTab("spend")}
+              className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all btn-press ${
+                tab === "spend"
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "bg-muted text-muted-foreground"
+              }`}
+            >
+              Spend
+            </button>
+            <button
+              onClick={() => setTab("earn")}
+              className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all btn-press ${
+                tab === "earn"
+                  ? "bg-accent text-accent-foreground shadow-md"
+                  : "bg-muted text-muted-foreground"
+              }`}
+            >
+              ⭐ Earn
+            </button>
+          </div>
+        )}
+
+        {/* Action button */}
+        {selectedChild && (
+          <div className="mt-3">
+            {tab === "spend" ? (
+              <Button
+                onClick={handleAddActivity}
+                className="w-full rounded-xl bg-secondary text-secondary-foreground hover:bg-secondary/80 font-bold h-11 text-base btn-press"
+              >
+                <Plus className="h-5 w-5 mr-2" />
+                Add Activity
+              </Button>
+            ) : (
+              <Button
+                onClick={handleAddChore}
+                className="w-full rounded-xl bg-accent text-accent-foreground hover:bg-accent/80 font-bold h-11 text-base btn-press"
+              >
+                <Plus className="h-5 w-5 mr-2" />
+                Add Chore
+              </Button>
+            )}
+          </div>
+        )}
       </header>
 
       {/* Content */}
       <main className="container max-w-lg mx-auto px-4 pt-4">
-        {selectedChild && (
-          <Button
-            onClick={handleAddActivity}
-            className="w-full rounded-xl bg-secondary text-secondary-foreground hover:bg-secondary/80 font-bold h-12 text-base btn-press mb-4"
-          >
-            <Plus className="h-5 w-5 mr-2" />
-            Add Activity
-          </Button>
+        {tab === "spend" && selectedChild && (
+          <>
+            {selectedChild.activities.length > 0 ? (
+              <div className="grid grid-cols-2 gap-3 auto-rows-fr">
+                {selectedChild.activities.map((act) => (
+                  <ActivityCard
+                    key={act.id}
+                    activity={act}
+                    earnCredits={selectedChild.earnCredits}
+                    onUseToken={() => handleUseToken(act)}
+                    onUseEarnCredit={() => handleUseEarnCredit(act)}
+                    onViewHistory={() => setLogsActivity(act)}
+                    onEdit={() => handleEditActivity(act)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <p className="text-5xl mb-3">🎯</p>
+                <p className="text-muted-foreground font-semibold">No activities yet.</p>
+                <p className="text-muted-foreground text-sm">Add one to get started!</p>
+              </div>
+            )}
+          </>
         )}
 
-        {selectedChild && selectedChild.activities.length > 0 ? (
-          <div className="grid grid-cols-2 gap-3 auto-rows-fr">
-            {selectedChild.activities.map((act) => (
-              <ActivityCard
-                key={act.id}
-                activity={act}
-                onUseToken={() => handleUseToken(act)}
-                onViewHistory={() => setLogsActivity(act)}
-                onEdit={() => handleEditActivity(act)}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-16">
-            <p className="text-5xl mb-3">🎯</p>
-            <p className="text-muted-foreground font-semibold">No activities yet.</p>
-            <p className="text-muted-foreground text-sm">Add one to get started!</p>
-          </div>
+        {tab === "earn" && selectedChild && (
+          <>
+            <div className="text-center mb-4 bg-accent/10 rounded-2xl p-4">
+              <p className="text-sm text-muted-foreground font-semibold">Earn Credits</p>
+              <p className="text-3xl font-extrabold text-accent-foreground">
+                <Star className="inline h-6 w-6 text-accent mr-1" />
+                {selectedChild.earnCredits}
+              </p>
+            </div>
+
+            {selectedChild.chores.length > 0 ? (
+              <div className="grid grid-cols-2 gap-3 auto-rows-fr">
+                {selectedChild.chores.map((chore) => (
+                  <ChoreCard
+                    key={chore.id}
+                    chore={chore}
+                    onComplete={() => handleCompleteChore(chore)}
+                    onViewHistory={() => setLogsChore(chore)}
+                    onEdit={() => handleEditChore(chore)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <p className="text-5xl mb-3">⭐</p>
+                <p className="text-muted-foreground font-semibold">No chores yet.</p>
+                <p className="text-muted-foreground text-sm">Add chores to earn credits!</p>
+              </div>
+            )}
+          </>
         )}
       </main>
 
@@ -225,6 +369,26 @@ const Index = () => {
         activityName={confirmActivity?.name ?? ""}
         onConfirm={handleConfirmUse}
         onCancel={() => setConfirmActivity(null)}
+      />
+
+      <ConfirmModal
+        open={!!confirmChore}
+        activityName={confirmChore?.name ?? ""}
+        title="Complete Chore?"
+        confirmText="Complete"
+        message={`Mark "${confirmChore?.name}" as completed?`}
+        onConfirm={handleConfirmChore}
+        onCancel={() => setConfirmChore(null)}
+      />
+
+      <ConfirmModal
+        open={!!earnCreditActivity}
+        activityName={earnCreditActivity?.name ?? ""}
+        title="Use Earn Credit?"
+        confirmText="Use Credit"
+        message="Use 1 Earn Credit to unlock 1 extra token?"
+        onConfirm={handleConfirmEarnCredit}
+        onCancel={() => setEarnCreditActivity(null)}
       />
 
       <MathGate
@@ -241,11 +405,27 @@ const Index = () => {
         initial={editingActivity ?? undefined}
       />
 
+      <ChoreForm
+        open={choreFormOpen}
+        onClose={() => { setChoreFormOpen(false); setEditingChore(null); }}
+        onSave={handleSaveChore}
+        onDelete={editingChore ? handleDeleteChore : undefined}
+        initial={editingChore ?? undefined}
+      />
+
       <ActivityLogs
         open={!!logsActivity}
         onClose={() => setLogsActivity(null)}
         activity={logsActivity}
       />
+
+      <ChoreLogs
+        open={!!logsChore}
+        onClose={() => setLogsChore(null)}
+        chore={logsChore}
+      />
+
+      <InstallPrompt />
     </div>
   );
 };
