@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 
 interface Props {
   activity: Activity;
+  earnCredits: number;
   onUseToken: () => void;
+  onUseEarnCredit: () => void;
   onViewHistory: () => void;
   onEdit: () => void;
 }
 
-export function ActivityCard({ activity, onUseToken, onViewHistory, onEdit }: Props) {
+export function ActivityCard({ activity, earnCredits, onUseToken, onUseEarnCredit, onViewHistory, onEdit }: Props) {
   const { icon, name, remainingQuota, totalQuota, durationText, periodType } = activity;
   const progress = totalQuota > 0 ? (remainingQuota / totalQuota) * 100 : 0;
   const isEmpty = remainingQuota === 0;
@@ -49,9 +51,19 @@ export function ActivityCard({ activity, onUseToken, onViewHistory, onEdit }: Pr
       </div>
 
       {isEmpty ? (
-        <p className="text-[11px] text-destructive font-semibold text-center leading-tight">
-          No tokens left
-        </p>
+        <div className="flex flex-col items-center gap-1 w-full">
+          <p className="text-[11px] text-destructive font-semibold text-center leading-tight">
+            No tokens left
+          </p>
+          {earnCredits > 0 && (
+            <Button
+              onClick={onUseEarnCredit}
+              className="w-full rounded-xl bg-accent text-accent-foreground hover:bg-accent/80 font-bold text-xs h-8 btn-press"
+            >
+              ⭐ Use Earn Credit
+            </Button>
+          )}
+        </div>
       ) : (
         <>
           <p className="text-[11px] text-secondary font-medium">You still have choices ✨</p>
