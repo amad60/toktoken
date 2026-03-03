@@ -57,7 +57,7 @@ function applyResets(data: AppData): AppData {
             : shouldResetMonthly(chore.lastResetDate);
         if (needsReset) {
           changed = true;
-          return { ...chore, remainingCount: chore.totalCount, lastResetDate: today };
+          return { ...chore, progressCount: 0, lastResetDate: today };
         }
         return chore;
       }),
@@ -67,7 +67,7 @@ function applyResets(data: AppData): AppData {
   return updated;
 }
 
-// Migrate old data that may not have earnCredits/chores
+// Migrate old data that may not have earnCredits/chores/progressCount
 function migrateData(data: AppData): AppData {
   let migrated = false;
   const updated = {
@@ -76,6 +76,19 @@ function migrateData(data: AppData): AppData {
       const c = { ...child };
       if (c.earnCredits === undefined) { c.earnCredits = 0; migrated = true; }
       if (!c.chores) { c.chores = []; migrated = true; }
+      // Migrate remainingCount → progressCount
+      c.chores = c.chores.map((ch: any) => {
+        if (ch.progressCount === undefined && ch.remainingCount !== undefined) {
+          migrated = true;
+          const { remainingCount, ...rest } = ch;
+          return { ...rest, progressCount: rest.totalCount - remainingCount };
+        }
+        if (ch.progressCount === undefined) {
+          migrated = true;
+          return { ...ch, progressCount: 0 };
+        }
+        return ch;
+      });
       return c;
     }),
   };
@@ -193,12 +206,12 @@ export function useToken(data: AppData, childId: string, activityId: string): Ap
 }
 
 // Chore CRUD
-export function addChore(data: AppData, childId: string, chore: Omit<Chore, "id" | "remainingCount" | "logs" | "lastResetDate">): AppData {
+export function addChore(data: AppData, childId: string, chore: Omit<Chore, "id" | "progressCount" | "logs" | "lastResetDate">): AppData {
   const today = new Date().toISOString().split("T")[0];
   const newChore: Chore = {
     ...chore,
     id: generateId(),
-    remainingCount: chore.totalCount,
+    progressCount: 0,
     logs: [],
     lastResetDate: today,
   };
@@ -251,11 +264,14 @@ export function completeChore(data: AppData, childId: string, choreId: string): 
       if (c.id !== childId) return c;
       let reward = 0;
       const chores = c.chores.map((ch) => {
-        if (ch.id === choreId && ch.remainingCount > 0) {
-          reward = ch.rewardAmount;
+        if (ch.id === choreId && ch.progressCount < ch.totalCount) {
+          const newProgress = ch.progressCount + 1;
+          if (newProgress === ch.totalCount) {
+            reward = ch.rewardAmount;
+          }
           return {
             ...ch,
-            remainingCount: ch.remainingCount - 1,
+            progressCount: newProgress,
             logs: [...ch.logs, { date: now }],
           };
         }
