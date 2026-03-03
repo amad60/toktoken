@@ -112,9 +112,10 @@ const Index = () => {
 
   const handleConfirmChore = () => {
     if (!confirmChore || !selectedChild) return;
+    const willComplete = confirmChore.progressCount + 1 >= confirmChore.totalCount;
     update(completeChore(data, selectedChild.id, confirmChore.id));
     setConfirmChore(null);
-    fireConfetti();
+    if (willComplete) fireConfetti();
   };
 
   // Math gate
@@ -229,12 +230,12 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background pb-8">
-      {/* Sticky header */}
+      {/* Sticky header — compact */}
       <header
-        className="sticky top-0 z-10 border-b border-border px-4 py-4 bg-background/95 backdrop-blur-sm shadow-[0_2px_12px_-4px_hsl(210_30%_80%/0.3)] transition-shadow"
+        className="sticky top-0 z-10 border-b border-border px-4 py-3 bg-background/95 backdrop-blur-sm shadow-[0_2px_12px_-4px_hsl(210_30%_80%/0.3)] transition-shadow"
         style={{ background: "linear-gradient(135deg, hsl(210 70% 95% / 0.95), hsl(150 50% 95% / 0.95))" }}
       >
-        <div className="flex items-center justify-center gap-2 mb-3">
+        <div className="flex items-center justify-center gap-2 mb-2">
           <span className="text-2xl">🎟️</span>
           <h1 className="font-extrabold text-xl text-foreground tracking-tight">
             Toktok Token
@@ -254,7 +255,7 @@ const Index = () => {
 
         {/* Spend / Earn toggle */}
         {selectedChild && (
-          <div className="flex gap-2 mt-3">
+          <div className="flex gap-2 mt-2">
             <button
               onClick={() => setTab("spend")}
               className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all btn-press ${
@@ -277,62 +278,37 @@ const Index = () => {
             </button>
           </div>
         )}
-
-        {/* Action button */}
-        {selectedChild && (
-          <div className="mt-3">
-            {tab === "spend" ? (
-              <Button
-                onClick={handleAddActivity}
-                className="w-full rounded-xl bg-secondary text-secondary-foreground hover:bg-secondary/80 font-bold h-11 text-base btn-press"
-              >
-                <Plus className="h-5 w-5 mr-2" />
-                Add Activity
-              </Button>
-            ) : (
-              <Button
-                onClick={handleAddChore}
-                className="w-full rounded-xl bg-accent text-accent-foreground hover:bg-accent/80 font-bold h-11 text-base btn-press"
-              >
-                <Plus className="h-5 w-5 mr-2" />
-                Add Chore
-              </Button>
-            )}
-          </div>
-        )}
       </header>
 
       {/* Content */}
       <main className="container max-w-lg mx-auto px-4 pt-4">
         {tab === "spend" && selectedChild && (
-          <>
-            {selectedChild.activities.length > 0 ? (
-              <div className="grid grid-cols-2 gap-3 auto-rows-fr">
-                {selectedChild.activities.map((act) => (
-                  <ActivityCard
-                    key={act.id}
-                    activity={act}
-                    earnCredits={selectedChild.earnCredits}
-                    onUseToken={() => handleUseToken(act)}
-                    onUseEarnCredit={() => handleUseEarnCredit(act)}
-                    onViewHistory={() => setLogsActivity(act)}
-                    onEdit={() => handleEditActivity(act)}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-16">
-                <p className="text-5xl mb-3">🎯</p>
-                <p className="text-muted-foreground font-semibold">No activities yet.</p>
-                <p className="text-muted-foreground text-sm">Add one to get started!</p>
-              </div>
-            )}
-          </>
+          <div className="grid grid-cols-2 gap-3 auto-rows-fr">
+            {selectedChild.activities.map((act) => (
+              <ActivityCard
+                key={act.id}
+                activity={act}
+                earnCredits={selectedChild.earnCredits}
+                onUseToken={() => handleUseToken(act)}
+                onUseEarnCredit={() => handleUseEarnCredit(act)}
+                onViewHistory={() => setLogsActivity(act)}
+                onEdit={() => handleEditActivity(act)}
+              />
+            ))}
+            {/* Add Activity card */}
+            <button
+              onClick={handleAddActivity}
+              className="bg-card rounded-2xl p-4 shadow-[0_2px_12px_-4px_hsl(210_30%_80%/0.3)] border border-dashed border-border flex flex-col items-center justify-center gap-2 min-h-0 btn-press hover:bg-muted/50 transition-colors"
+            >
+              <Plus className="h-10 w-10 text-muted-foreground" />
+              <span className="text-sm font-bold text-muted-foreground">Add Activity</span>
+            </button>
+          </div>
         )}
 
         {tab === "earn" && selectedChild && (
           <>
-            <div className="text-center mb-4 bg-accent/10 rounded-2xl p-4">
+            <div className="text-center mb-4 bg-accent/10 rounded-2xl p-3">
               <p className="text-sm text-muted-foreground font-semibold">Earn Credits</p>
               <p className="text-3xl font-extrabold text-accent-foreground">
                 <Star className="inline h-6 w-6 text-accent mr-1" />
@@ -340,25 +316,25 @@ const Index = () => {
               </p>
             </div>
 
-            {selectedChild.chores.length > 0 ? (
-              <div className="grid grid-cols-2 gap-3 auto-rows-fr">
-                {selectedChild.chores.map((chore) => (
-                  <ChoreCard
-                    key={chore.id}
-                    chore={chore}
-                    onComplete={() => handleCompleteChore(chore)}
-                    onViewHistory={() => setLogsChore(chore)}
-                    onEdit={() => handleEditChore(chore)}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-16">
-                <p className="text-5xl mb-3">⭐</p>
-                <p className="text-muted-foreground font-semibold">No chores yet.</p>
-                <p className="text-muted-foreground text-sm">Add chores to earn credits!</p>
-              </div>
-            )}
+            <div className="grid grid-cols-2 gap-3 auto-rows-fr">
+              {selectedChild.chores.map((chore) => (
+                <ChoreCard
+                  key={chore.id}
+                  chore={chore}
+                  onComplete={() => handleCompleteChore(chore)}
+                  onViewHistory={() => setLogsChore(chore)}
+                  onEdit={() => handleEditChore(chore)}
+                />
+              ))}
+              {/* Add Chore card */}
+              <button
+                onClick={handleAddChore}
+                className="bg-card rounded-2xl p-4 shadow-[0_2px_12px_-4px_hsl(210_30%_80%/0.3)] border border-dashed border-border flex flex-col items-center justify-center gap-2 min-h-0 btn-press hover:bg-muted/50 transition-colors"
+              >
+                <Plus className="h-10 w-10 text-muted-foreground" />
+                <span className="text-sm font-bold text-muted-foreground">Add Chore</span>
+              </button>
+            </div>
           </>
         )}
       </main>

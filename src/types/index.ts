@@ -21,7 +21,7 @@ export interface Chore {
   rewardAmount: number;
   periodType: "weekly" | "monthly";
   totalCount: number;
-  remainingCount: number;
+  progressCount: number;
   logs: ActivityLog[];
   lastResetDate: string;
 }

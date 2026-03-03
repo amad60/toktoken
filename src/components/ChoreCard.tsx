@@ -10,13 +10,13 @@ interface Props {
 }
 
 export function ChoreCard({ chore, onComplete, onViewHistory, onEdit }: Props) {
-  const { icon, name, remainingCount, totalCount, periodType, rewardAmount } = chore;
-  const progress = totalCount > 0 ? (remainingCount / totalCount) * 100 : 0;
-  const isEmpty = remainingCount === 0;
+  const { icon, name, progressCount, totalCount, periodType, rewardAmount } = chore;
+  const progress = totalCount > 0 ? (progressCount / totalCount) * 100 : 0;
+  const isComplete = progressCount >= totalCount;
 
   return (
     <div
-      className={`bg-card rounded-2xl p-4 shadow-[0_2px_12px_-4px_hsl(210_30%_80%/0.5)] border border-border animate-bounce-in flex flex-col items-center gap-2 transition-opacity min-h-0 ${isEmpty ? "opacity-60" : ""}`}
+      className={`bg-card rounded-2xl p-4 shadow-[0_2px_12px_-4px_hsl(210_30%_80%/0.5)] border border-border animate-bounce-in flex flex-col items-center gap-2 transition-opacity min-h-0 ${isComplete ? "opacity-60" : ""}`}
     >
       <button onClick={onEdit} className="flex flex-col items-center gap-1 w-full btn-press">
         <span className="text-5xl leading-none">{icon}</span>
@@ -31,7 +31,7 @@ export function ChoreCard({ chore, onComplete, onViewHistory, onEdit }: Props) {
       <div className="w-full space-y-1">
         <div className="flex justify-between text-xs">
           <span className="font-bold text-foreground">
-            {remainingCount} / {totalCount}
+            {progressCount} / {totalCount}
           </span>
           <span className="text-muted-foreground capitalize text-[10px]">
             {periodType === "weekly" ? "Mon reset" : "1st reset"}
@@ -39,17 +39,17 @@ export function ChoreCard({ chore, onComplete, onViewHistory, onEdit }: Props) {
         </div>
         <Progress
           value={progress}
-          className={`h-2 rounded-full bg-muted ${isEmpty ? "[&>div]:bg-destructive" : "[&>div]:bg-accent"} [&>div]:rounded-full`}
+          className={`h-2 rounded-full bg-muted ${isComplete ? "[&>div]:bg-accent" : "[&>div]:bg-accent/60"} [&>div]:rounded-full`}
         />
       </div>
 
-      {isEmpty ? (
-        <p className="text-[11px] text-destructive font-semibold text-center leading-tight">
-          No rewards left this period
+      {isComplete ? (
+        <p className="text-[11px] text-accent font-semibold text-center leading-tight">
+          ✅ Completed! Reward earned
         </p>
       ) : (
         <>
-          <p className="text-[11px] text-accent font-medium">Keep it up! 💪</p>
+          <p className="text-[11px] text-muted-foreground font-medium">Keep going! 💪</p>
           <Button
             onClick={onComplete}
             className="w-full rounded-xl bg-accent text-accent-foreground hover:bg-accent/80 font-bold text-sm h-9 btn-press"
