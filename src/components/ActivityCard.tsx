@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Activity } from "@/types";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { Progress } from "@/components/ui/progress";
@@ -27,11 +27,12 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onStartTimer, 
 
   const { isRunning, formatted, finished, clearFinished } = useActivityTimer(activity.id);
 
-  // When timer finishes, notify parent
-  if (finished) {
-    clearFinished();
-    onTimerFinished();
-  }
+  useEffect(() => {
+    if (finished) {
+      clearFinished();
+      onTimerFinished();
+    }
+  }, [finished]);
 
   const visibleStars = Math.min(remainingQuota, MAX_VISIBLE);
   const overflow = remainingQuota - MAX_VISIBLE;
