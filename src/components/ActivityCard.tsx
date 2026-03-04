@@ -56,33 +56,32 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onUseEarnCredi
 
       {/* Token star slots */}
       <div className="relative w-full flex flex-col items-center gap-1.5">
-        <div className="flex items-center justify-center gap-1 min-h-[28px]">
+        <div className="flex items-center justify-center gap-2.5 min-h-[44px]">
           {isEmpty ? (
-            // Empty outlined slots
             Array.from({ length: emptySlots }).map((_, i) => (
               <span
                 key={i}
-                className="text-lg opacity-30 select-none"
+                className="w-11 h-11 flex items-center justify-center text-2xl opacity-30 select-none"
                 style={{ filter: "grayscale(1)" }}
               >
                 ⭐
               </span>
             ))
           ) : (
-            // Filled stars
             <>
               {Array.from({ length: visibleStars }).map((_, i) => (
                 <button
                   key={i}
                   onClick={handleStarTap}
-                  className="text-lg transition-transform active:scale-125 btn-press select-none"
+                  className="w-11 h-11 flex items-center justify-center text-2xl select-none transition-transform duration-150 active:scale-105"
+                  style={{ filter: "drop-shadow(0 1px 2px rgba(250,204,21,0.4))" }}
                   aria-label={`Use token for ${name}`}
                 >
                   ⭐
                 </button>
               ))}
               {overflow > 0 && (
-                <span className="text-[11px] font-bold text-muted-foreground ml-0.5">
+                <span className="text-xs font-bold text-muted-foreground self-center">
                   +{overflow}
                 </span>
               )}
