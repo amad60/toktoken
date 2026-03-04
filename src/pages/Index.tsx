@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import confetti from "canvas-confetti";
 import { Activity, Chore, AppData } from "@/types";
 import {
@@ -17,6 +17,7 @@ import { MathGate } from "@/components/MathGate";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { Button } from "@/components/ui/button";
 import { Plus, Star } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
@@ -36,6 +37,9 @@ const Index = () => {
   const [tab, setTab] = useState<TabMode>("spend");
 
   const selectedChild = data.children.find((c) => c.id === data.selectedChildId);
+
+  // Track app open once
+  useEffect(() => { trackEvent("app_open"); }, []);
   const hasChildren = data.children.length > 0;
 
   // onboarding
@@ -90,6 +94,7 @@ const Index = () => {
     if (!selectedChild) return;
     update(useToken(data, selectedChild.id, activity.id));
     fireConfetti();
+    trackEvent("token_used", selectedChild.name, activity.name);
   };
 
   // Earn credit usage
@@ -110,7 +115,10 @@ const Index = () => {
     const willComplete = confirmChore.progressCount + 1 >= confirmChore.totalCount;
     update(completeChore(data, selectedChild.id, confirmChore.id));
     setConfirmChore(null);
-    if (willComplete) fireConfetti();
+    if (willComplete) {
+      fireConfetti();
+      trackEvent("activity_completed", selectedChild.name, confirmChore.name);
+    }
   };
 
   // Math gate
@@ -140,6 +148,7 @@ const Index = () => {
       update(updateActivity(data, selectedChild.id, editingActivity.id, formData));
     } else {
       update(addActivity(data, selectedChild.id, formData));
+      trackEvent("activity_created", selectedChild.name, formData.name);
     }
     setFormOpen(false);
     setEditingActivity(null);
