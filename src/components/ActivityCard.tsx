@@ -13,7 +13,7 @@ interface Props {
   onEdit: () => void;
 }
 
-const MAX_VISIBLE_STARS = 3;
+// Stars scroll horizontally when > 3
 
 export function ActivityCard({ activity, earnCredits, onUseToken, onUseEarnCredit, onViewHistory, onEdit }: Props) {
   const { icon, name, remainingQuota, totalQuota, durationText, periodType } = activity;
@@ -21,9 +21,8 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onUseEarnCredi
   const isEmpty = remainingQuota === 0;
   const [confirmOpen, setConfirmOpen] = useState(false);
 
-  const visibleStars = Math.min(remainingQuota, MAX_VISIBLE_STARS);
-  const overflow = remainingQuota - MAX_VISIBLE_STARS;
-  const emptySlots = isEmpty ? Math.min(totalQuota, MAX_VISIBLE_STARS) : 0;
+  // All stars rendered; row scrolls if needed
+  const emptySlots = isEmpty ? Math.min(totalQuota, 3) : 0;
 
   const handleStarTap = () => {
     if (isEmpty) return;
@@ -56,12 +55,12 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onUseEarnCredi
 
       {/* Token star slots */}
       <div className="relative w-full flex flex-col items-center gap-1.5 py-1.5">
-        <div className="flex items-center justify-center gap-2.5 min-h-[56px] flex-nowrap overflow-hidden w-full">
+        <div className="flex items-center gap-2 min-h-[48px] overflow-x-auto w-full justify-center scrollbar-none">
           {isEmpty ? (
             Array.from({ length: emptySlots }).map((_, i) => (
               <span
                 key={i}
-                className="w-14 h-14 flex-shrink-0 flex items-center justify-center text-3xl opacity-30 select-none"
+                className="w-12 h-12 flex-shrink-0 flex items-center justify-center text-2xl opacity-30 select-none"
                 style={{ filter: "grayscale(1)" }}
               >
                 ⭐
@@ -69,22 +68,17 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onUseEarnCredi
             ))
           ) : (
             <>
-              {Array.from({ length: visibleStars }).map((_, i) => (
+              {Array.from({ length: remainingQuota }).map((_, i) => (
                 <button
                   key={i}
                   onClick={handleStarTap}
-                  className="w-14 h-14 flex-shrink-0 flex items-center justify-center text-3xl select-none transition-transform duration-150 active:scale-105"
+                  className="w-12 h-12 flex-shrink-0 flex items-center justify-center text-2xl select-none transition-transform duration-150 active:scale-105"
                   style={{ filter: "drop-shadow(0 2px 4px rgba(250,204,21,0.45))" }}
                   aria-label={`Use token for ${name}`}
                 >
                   ⭐
                 </button>
               ))}
-              {overflow > 0 && (
-                <span className="text-xs font-bold text-muted-foreground flex-shrink-0 ml-0.5 self-center">
-                  +{overflow}
-                </span>
-              )}
             </>
           )}
         </div>
