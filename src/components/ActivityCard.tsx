@@ -55,7 +55,7 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onUseEarnCredi
 
       {/* Token star slots */}
       <div className="relative w-full flex flex-col items-center gap-1.5 py-2">
-        <div className="flex items-center gap-3 min-h-[56px] w-full justify-center">
+        <div className="flex items-center justify-start gap-[10px] min-h-[56px]">
           {!isEmpty && (
             <>
               {Array.from({ length: visibleStars }).map((_, i) => (
@@ -70,8 +70,8 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onUseEarnCredi
                 </button>
               ))}
               {overflow > 0 && (
-                <span className="text-sm font-bold text-muted-foreground flex-shrink-0 self-center">
-                  +{overflow}
+                <span className="text-xs font-medium flex-shrink-0 self-center ml-[-2px]" style={{ color: '#6B7280' }}>
+                  (+{overflow})
                 </span>
               )}
             </>
