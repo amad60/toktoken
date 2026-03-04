@@ -3,46 +3,68 @@ import { Activity } from "@/types";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { getResetCountdown } from "@/lib/resetCountdown";
+import { useActivityTimer } from "@/hooks/useActivityTimer";
 
 interface Props {
   activity: Activity;
   earnCredits: number;
   onUseToken: () => void;
+  onStartTimer: () => void;
   onUseEarnCredit: () => void;
   onViewHistory: () => void;
   onEdit: () => void;
+  onTimerFinished: () => void;
 }
 
 const MAX_VISIBLE = 2;
 
-export function ActivityCard({ activity, earnCredits, onUseToken, onUseEarnCredit, onViewHistory, onEdit }: Props) {
-  const { icon, name, remainingQuota, totalQuota, durationText, periodType } = activity;
+export function ActivityCard({ activity, earnCredits, onUseToken, onStartTimer, onUseEarnCredit, onViewHistory, onEdit, onTimerFinished }: Props) {
+  const { icon, name, remainingQuota, totalQuota, durationText, durationMinutes, periodType } = activity;
   const progress = totalQuota > 0 ? (remainingQuota / totalQuota) * 100 : 0;
   const isEmpty = remainingQuota === 0;
   const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const { isRunning, formatted, finished, clearFinished } = useActivityTimer(activity.id);
+
+  // When timer finishes, notify parent
+  if (finished) {
+    clearFinished();
+    onTimerFinished();
+  }
 
   const visibleStars = Math.min(remainingQuota, MAX_VISIBLE);
   const overflow = remainingQuota - MAX_VISIBLE;
 
   const handleStarTap = () => {
     if (isEmpty) return;
+    if (isRunning) {
+      // Show inline message instead
+      return;
+    }
     setConfirmOpen(true);
   };
 
   const handleConfirm = () => {
     setConfirmOpen(false);
-    onUseToken();
+    if (durationMinutes) {
+      onStartTimer();
+    } else {
+      onUseToken();
+    }
   };
 
   return (
     <div
-      className={`bg-card rounded-2xl p-4 shadow-[0_2px_12px_-4px_hsl(210_30%_80%/0.5)] border border-border animate-bounce-in flex flex-col items-center gap-2 transition-opacity min-h-0 ${isEmpty ? "opacity-60" : ""}`}
+      className={`bg-card rounded-2xl p-4 shadow-[0_2px_12px_-4px_hsl(210_30%_80%/0.5)] border border-border animate-bounce-in flex flex-col items-center gap-2 transition-opacity min-h-0 ${isEmpty && !isRunning ? "opacity-60" : ""}`}
     >
       <button onClick={onEdit} className="flex flex-col items-center gap-1 w-full btn-press">
         <span className="text-5xl leading-none">{icon}</span>
         <h3 className="font-bold text-foreground text-sm truncate max-w-full">{name}</h3>
-        {durationText && (
+        {durationText && !durationMinutes && (
           <p className="text-[11px] text-muted-foreground">{durationText}</p>
+        )}
+        {durationMinutes && !isRunning && (
+          <p className="text-[11px] text-muted-foreground">{durationMinutes} min per use</p>
         )}
       </button>
 
@@ -53,10 +75,17 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onUseEarnCredi
         History
       </button>
 
+      {/* Timer display */}
+      {isRunning && formatted && (
+        <div className="w-full bg-primary/10 rounded-xl py-2 px-3 text-center animate-bounce-in">
+          <p className="text-sm font-bold text-primary">⏱ {formatted} remaining</p>
+        </div>
+      )}
+
       {/* Token star slots */}
       <div className="relative w-full flex flex-col items-center gap-1.5 py-2">
         <div className="flex items-center justify-start gap-[10px] min-h-[56px]">
-          {!isEmpty && (
+          {!isEmpty && !isRunning && (
             <>
               {Array.from({ length: visibleStars }).map((_, i) => (
                 <button
@@ -76,13 +105,26 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onUseEarnCredi
               )}
             </>
           )}
+          {isRunning && !isEmpty && (
+            <button
+              onClick={() => {}}
+              className="w-14 h-14 flex-shrink-0 flex items-center justify-center text-3xl select-none opacity-40"
+              aria-label="Timer already running"
+              title="Timer already running"
+            >
+              ⭐
+            </button>
+          )}
         </div>
 
         {/* Inline confirmation popover */}
         {confirmOpen && (
           <div className="absolute top-full mt-1 z-20 bg-card border border-border rounded-xl shadow-lg p-3 w-full animate-bounce-in">
             <p className="text-xs text-foreground text-center mb-2">
-              Use 1 token for <span className="font-bold">{name}</span>?
+              {durationMinutes
+                ? <>Start a <span className="font-bold">{durationMinutes} minute</span> timer?</>
+                : <>Use 1 token for <span className="font-bold">{name}</span>?</>
+              }
             </p>
             <div className="flex gap-2">
               <Button
@@ -96,7 +138,7 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onUseEarnCredi
                 onClick={handleConfirm}
                 className="flex-1 rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 font-bold text-xs h-7 px-2 btn-press"
               >
-                Confirm
+                {durationMinutes ? "Start Timer" : "Confirm"}
               </Button>
             </div>
           </div>
@@ -118,7 +160,7 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onUseEarnCredi
         />
       </div>
 
-      {isEmpty && (
+      {isEmpty && !isRunning && (
         <div className="flex flex-col items-center gap-1 w-full">
           <p className="text-[11px] text-destructive font-semibold text-center leading-tight">
             No tokens left

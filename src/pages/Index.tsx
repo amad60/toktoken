@@ -5,6 +5,7 @@ import {
   loadData, saveData, addChild, addActivity, updateActivity, deleteActivity,
   useToken, addChore, updateChore, deleteChore, completeChore, useEarnCredit,
 } from "@/lib/storage";
+import { startTimer } from "@/lib/timerStorage";
 import { ChildSelector } from "@/components/ChildSelector";
 import { ActivityCard } from "@/components/ActivityCard";
 import { ChoreCard } from "@/components/ChoreCard";
@@ -50,6 +51,8 @@ const Index = () => {
   const [confirmChore, setConfirmChore] = useState<Chore | null>(null);
   // confirm earn credit use
   const [earnCreditActivity, setEarnCreditActivity] = useState<Activity | null>(null);
+  // timer finished modal
+  const [timerFinishedName, setTimerFinishedName] = useState<string | null>(null);
 
   // activity form
   const [formOpen, setFormOpen] = useState(false);
@@ -97,6 +100,30 @@ const Index = () => {
     trackEvent("token_used", selectedChild.name, activity.name);
   };
 
+  // Timer start: use token + start timer
+  const handleStartTimer = (activity: Activity) => {
+    if (!selectedChild || !activity.durationMinutes) return;
+    update(useToken(data, selectedChild.id, activity.id));
+    startTimer(activity.id, selectedChild.id, activity.durationMinutes);
+    trackEvent("token_used", selectedChild.name, activity.name);
+  };
+
+  // Timer finished - play beep via Web Audio API
+  const handleTimerFinished = (activityName: string) => {
+    try {
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 880;
+      gain.gain.value = 0.3;
+      osc.start();
+      osc.stop(ctx.currentTime + 0.3);
+    } catch {}
+    setTimerFinishedName(activityName);
+  };
+
   // Earn credit usage
   const handleUseEarnCredit = (activity: Activity) => setEarnCreditActivity(activity);
 
@@ -142,7 +169,7 @@ const Index = () => {
     requireMath(() => { setEditingActivity(activity); setFormOpen(true); });
   };
 
-  const handleSaveActivity = (formData: { name: string; icon: string; periodType: "weekly" | "monthly"; totalQuota: number; durationText?: string }) => {
+  const handleSaveActivity = (formData: { name: string; icon: string; periodType: "weekly" | "monthly"; totalQuota: number; durationMinutes?: number }) => {
     if (!selectedChild) return;
     if (editingActivity) {
       update(updateActivity(data, selectedChild.id, editingActivity.id, formData));
@@ -294,9 +321,11 @@ const Index = () => {
                 activity={act}
                 earnCredits={selectedChild.earnCredits}
                 onUseToken={() => handleUseToken(act)}
+                onStartTimer={() => handleStartTimer(act)}
                 onUseEarnCredit={() => handleUseEarnCredit(act)}
                 onViewHistory={() => setLogsActivity(act)}
                 onEdit={() => handleEditActivity(act)}
+                onTimerFinished={() => handleTimerFinished(act.name)}
               />
             ))}
             {/* Add Activity card */}
@@ -397,6 +426,17 @@ const Index = () => {
         open={!!logsChore}
         onClose={() => setLogsChore(null)}
         chore={logsChore}
+      />
+
+      {/* Timer finished modal */}
+      <ConfirmModal
+        open={!!timerFinishedName}
+        activityName={timerFinishedName ?? ""}
+        title="⏰ Time is up!"
+        confirmText="OK"
+        message="This activity has finished."
+        onConfirm={() => setTimerFinishedName(null)}
+        onCancel={() => setTimerFinishedName(null)}
       />
 
       <InstallPrompt />
