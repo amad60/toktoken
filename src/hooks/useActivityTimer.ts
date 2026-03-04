@@ -16,6 +16,25 @@ export function useActivityTimer(activityId: string) {
       clearTimer(activityId);
       setRemainingMs(null);
       setFinished(true);
+
+      // Browser notification
+      if (typeof Notification !== 'undefined') {
+        if (Notification.permission === 'default') {
+          Notification.requestPermission().then((perm) => {
+            if (perm === 'granted') {
+              new Notification('⏰ Time is up!', {
+                body: 'Your activity timer has finished.',
+                icon: '/icons/icon-192.png',
+              });
+            }
+          });
+        } else if (Notification.permission === 'granted') {
+          new Notification('⏰ Time is up!', {
+            body: 'Your activity timer has finished.',
+            icon: '/icons/icon-192.png',
+          });
+        }
+      }
     } else {
       setRemainingMs(ms);
     }
