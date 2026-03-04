@@ -1,6 +1,7 @@
 import { Chore } from "@/types";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import { getResetCountdown } from "@/lib/resetCountdown";
 
 interface Props {
   chore: Chore;
@@ -33,8 +34,8 @@ export function ChoreCard({ chore, onComplete, onViewHistory, onEdit }: Props) {
           <span className="font-bold text-foreground">
             {progressCount} / {totalCount}
           </span>
-          <span className="text-muted-foreground capitalize text-[10px]">
-            {periodType === "weekly" ? "Mon reset" : "1st reset"}
+          <span className="text-muted-foreground text-[10px]">
+            {getResetCountdown(periodType)}
           </span>
         </div>
         <Progress

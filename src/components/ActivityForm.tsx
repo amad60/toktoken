@@ -34,11 +34,12 @@ export function ActivityForm({ open, onClose, onSave, onDelete, initial }: Props
 
   const handleSave = () => {
     if (!name.trim() || !quota) return;
+    const parsedQuota = Math.max(1, Math.min(10, parseInt(quota) || 1));
     onSave({
       name: name.trim(),
       icon,
       periodType,
-      totalQuota: Math.max(1, parseInt(quota) || 1),
+      totalQuota: parsedQuota,
       durationText: duration.trim() || undefined,
     });
   };
@@ -84,7 +85,8 @@ export function ActivityForm({ open, onClose, onSave, onDelete, initial }: Props
           </div>
           <div>
             <Label className="text-foreground text-sm font-semibold">Tokens per period</Label>
-            <Input type="number" min="1" value={quota} onChange={(e) => setQuota(e.target.value)} className="rounded-xl bg-muted text-foreground mt-1" />
+            <Input type="number" min="1" max="10" value={quota} onChange={(e) => setQuota(e.target.value)} className="rounded-xl bg-muted text-foreground mt-1" />
+            {parseInt(quota) > 10 && <p className="text-[11px] text-destructive mt-1">Maximum 10 tokens per period</p>}
           </div>
           <div>
             <Label className="text-foreground text-sm font-semibold">Duration text (optional)</Label>

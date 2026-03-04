@@ -42,8 +42,6 @@ const Index = () => {
   const [onboardOpen, setOnboardOpen] = useState(false);
   const [onboardName, setOnboardName] = useState("");
 
-  // confirm use token
-  const [confirmActivity, setConfirmActivity] = useState<Activity | null>(null);
   // confirm chore complete
   const [confirmChore, setConfirmChore] = useState<Chore | null>(null);
   // confirm earn credit use
@@ -87,13 +85,10 @@ const Index = () => {
     }
   };
 
-  // Activity token usage
-  const handleUseToken = (activity: Activity) => setConfirmActivity(activity);
-
-  const handleConfirmUse = () => {
-    if (!confirmActivity || !selectedChild) return;
-    update(useToken(data, selectedChild.id, confirmActivity.id));
-    setConfirmActivity(null);
+  // Activity token usage (confirmation now handled inline in ActivityCard)
+  const handleUseToken = (activity: Activity) => {
+    if (!selectedChild) return;
+    update(useToken(data, selectedChild.id, activity.id));
     fireConfetti();
   };
 
@@ -340,12 +335,6 @@ const Index = () => {
       </main>
 
       {/* Modals */}
-      <ConfirmModal
-        open={!!confirmActivity}
-        activityName={confirmActivity?.name ?? ""}
-        onConfirm={handleConfirmUse}
-        onCancel={() => setConfirmActivity(null)}
-      />
 
       <ConfirmModal
         open={!!confirmChore}
