@@ -82,22 +82,21 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onStartTimer, 
 
       {/* Token star slots */}
       <div className="relative w-full flex flex-col items-center gap-1.5 py-2">
-        <div className="flex items-center justify-start gap-[10px] min-h-[56px]">
+        <div className="flex items-center justify-start gap-2 min-h-[56px]">
           {!isEmpty && !isRunning && (
             <>
               {Array.from({ length: visibleStars }).map((_, i) => (
                 <button
                   key={i}
                   onClick={handleStarTap}
-                  className="w-14 h-14 flex-shrink-0 flex items-center justify-center text-3xl select-none transition-transform duration-150 active:scale-105"
-                  style={{ filter: "drop-shadow(0 2px 4px rgba(250,204,21,0.45))" }}
+                  className="w-12 h-12 flex-shrink-0 flex items-center justify-center text-2xl select-none rounded-full bg-[hsl(45_80%_92%)] shadow-[0_2px_8px_rgba(250,204,21,0.35)] transition-transform duration-150 active:scale-90 btn-press"
                   aria-label={`Use token for ${name}`}
                 >
                   ⭐
                 </button>
               ))}
               {overflow > 0 && (
-                <span className="text-xs font-medium flex-shrink-0 self-center ml-[-2px]" style={{ color: '#6B7280' }}>
+                <span className="text-xs font-semibold flex-shrink-0 self-center ml-1.5 text-muted-foreground">
                   (+{overflow})
                 </span>
               )}
@@ -106,7 +105,7 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onStartTimer, 
           {isRunning && !isEmpty && (
             <button
               onClick={() => {}}
-              className="w-14 h-14 flex-shrink-0 flex items-center justify-center text-3xl select-none opacity-40"
+              className="w-12 h-12 flex-shrink-0 flex items-center justify-center text-2xl select-none rounded-full bg-[hsl(45_80%_92%)] shadow-[0_2px_8px_rgba(250,204,21,0.35)] opacity-40"
               aria-label="Timer already running"
               title="Timer already running"
             >
