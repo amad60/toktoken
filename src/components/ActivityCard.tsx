@@ -55,13 +55,13 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onUseEarnCredi
       </button>
 
       {/* Token star slots */}
-      <div className="relative w-full flex flex-col items-center gap-1.5">
-        <div className="flex items-center justify-center gap-2.5 min-h-[44px]">
+      <div className="relative w-full flex flex-col items-center gap-1.5 py-1.5">
+        <div className="flex items-center justify-center gap-2.5 min-h-[56px] flex-nowrap overflow-hidden w-full">
           {isEmpty ? (
             Array.from({ length: emptySlots }).map((_, i) => (
               <span
                 key={i}
-                className="w-11 h-11 flex items-center justify-center text-2xl opacity-30 select-none"
+                className="w-14 h-14 flex-shrink-0 flex items-center justify-center text-3xl opacity-30 select-none"
                 style={{ filter: "grayscale(1)" }}
               >
                 ⭐
@@ -73,15 +73,15 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onUseEarnCredi
                 <button
                   key={i}
                   onClick={handleStarTap}
-                  className="w-11 h-11 flex items-center justify-center text-2xl select-none transition-transform duration-150 active:scale-105"
-                  style={{ filter: "drop-shadow(0 1px 2px rgba(250,204,21,0.4))" }}
+                  className="w-14 h-14 flex-shrink-0 flex items-center justify-center text-3xl select-none transition-transform duration-150 active:scale-105"
+                  style={{ filter: "drop-shadow(0 2px 4px rgba(250,204,21,0.45))" }}
                   aria-label={`Use token for ${name}`}
                 >
                   ⭐
                 </button>
               ))}
               {overflow > 0 && (
-                <span className="text-xs font-bold text-muted-foreground self-center">
+                <span className="text-xs font-bold text-muted-foreground flex-shrink-0 ml-0.5 self-center">
                   +{overflow}
                 </span>
               )}
