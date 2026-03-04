@@ -63,4 +63,11 @@
   .btn-press {
     @apply transition-transform duration-100 active:scale-95;
   }
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
 }
