@@ -9,15 +9,17 @@ export function trackEvent(
   activityName = "",
   metadata: Record<string, unknown> = {},
 ) {
-  fetch(ENDPOINT, {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
+  const body = {
       event_name: eventName,
       user_id: getAnonymousUserId(),
       activity_name: activityName,
       metadata,
-    }),
+    };
+  console.log("[analytics] trackEvent body:", JSON.stringify(body));
+  fetch(ENDPOINT, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
   }).catch(() => {});
 }
