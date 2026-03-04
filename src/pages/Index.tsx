@@ -41,7 +41,7 @@ const Index = () => {
 
   // Track app open once
   useEffect(() => {
-    trackEvent("app_open", selectedChild?.name || "", "", { has_child: !!selectedChild });
+    trackEvent("app_open", "", "", { has_child: !!selectedChild });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const hasChildren = data.children.length > 0;
@@ -85,7 +85,7 @@ const Index = () => {
 
   const handleAddChild = (name: string) => {
     update(addChild(data, name));
-    trackEvent("child_created", name);
+    trackEvent("child_created");
   };
 
   const handleOnboardAdd = () => {
@@ -101,7 +101,7 @@ const Index = () => {
     if (!selectedChild) return;
     update(useToken(data, selectedChild.id, activity.id));
     fireConfetti();
-    trackEvent("token_used", selectedChild.name, activity.name);
+    trackEvent("token_used", "", activity.name);
   };
 
   // Timer start: use token + start timer
@@ -109,7 +109,7 @@ const Index = () => {
     if (!selectedChild || !activity.durationMinutes) return;
     update(useToken(data, selectedChild.id, activity.id));
     startTimer(activity.id, selectedChild.id, activity.durationMinutes);
-    trackEvent("token_used", selectedChild.name, activity.name);
+    trackEvent("token_used", "", activity.name);
   };
 
   // Timer finished - play beep via Web Audio API
@@ -148,7 +148,7 @@ const Index = () => {
     setConfirmChore(null);
     if (willComplete) {
       fireConfetti();
-      trackEvent("activity_completed", selectedChild.name, confirmChore.name);
+      trackEvent("activity_completed", "", confirmChore.name);
     }
   };
 
@@ -179,7 +179,7 @@ const Index = () => {
       update(updateActivity(data, selectedChild.id, editingActivity.id, formData));
     } else {
       update(addActivity(data, selectedChild.id, formData));
-      trackEvent("activity_created", selectedChild.name, formData.name);
+      trackEvent("activity_created", "", formData.name);
     }
     setFormOpen(false);
     setEditingActivity(null);
