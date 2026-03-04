@@ -149,7 +149,7 @@ export function addActivity(data: AppData, childId: string, activity: Omit<Activ
   return updated;
 }
 
-export function updateActivity(data: AppData, childId: string, activityId: string, updates: Partial<Pick<Activity, "name" | "icon" | "periodType" | "totalQuota" | "durationText">>): AppData {
+export function updateActivity(data: AppData, childId: string, activityId: string, updates: Partial<Pick<Activity, "name" | "icon" | "periodType" | "totalQuota" | "durationMinutes">>): AppData {
   const updated = {
     ...data,
     children: data.children.map((c) =>

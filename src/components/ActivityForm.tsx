@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 interface Props {
   open: boolean;
   onClose: () => void;
-  onSave: (data: { name: string; icon: string; periodType: "weekly" | "monthly"; totalQuota: number; durationText?: string }) => void;
+  onSave: (data: { name: string; icon: string; periodType: "weekly" | "monthly"; totalQuota: number; durationMinutes?: number }) => void;
   onDelete?: () => void;
   initial?: Activity;
 }
@@ -19,7 +19,7 @@ export function ActivityForm({ open, onClose, onSave, onDelete, initial }: Props
   const [icon, setIcon] = useState("🎮");
   const [periodType, setPeriodType] = useState<"weekly" | "monthly">("weekly");
   const [quota, setQuota] = useState("3");
-  const [duration, setDuration] = useState("");
+  const [durationMin, setDurationMin] = useState("");
 
   // Reset form state every time the modal opens
   useEffect(() => {
@@ -28,19 +28,20 @@ export function ActivityForm({ open, onClose, onSave, onDelete, initial }: Props
       setIcon(initial?.icon ?? "🎮");
       setPeriodType(initial?.periodType ?? "weekly");
       setQuota(String(initial?.totalQuota ?? 3));
-      setDuration(initial?.durationText ?? "");
+      setDurationMin(initial?.durationMinutes ? String(initial.durationMinutes) : "");
     }
   }, [open, initial]);
 
   const handleSave = () => {
     if (!name.trim() || !quota) return;
     const parsedQuota = Math.max(1, Math.min(10, parseInt(quota) || 1));
+    const parsedDuration = durationMin ? Math.max(1, Math.min(180, parseInt(durationMin) || 0)) : undefined;
     onSave({
       name: name.trim(),
       icon,
       periodType,
       totalQuota: parsedQuota,
-      durationText: duration.trim() || undefined,
+      durationMinutes: parsedDuration || undefined,
     });
   };
 
@@ -89,8 +90,9 @@ export function ActivityForm({ open, onClose, onSave, onDelete, initial }: Props
             {parseInt(quota) > 10 && <p className="text-[11px] text-destructive mt-1">Maximum 10 tokens per period</p>}
           </div>
           <div>
-            <Label className="text-foreground text-sm font-semibold">Duration text (optional)</Label>
-            <Input value={duration} onChange={(e) => setDuration(e.target.value)} className="rounded-xl bg-muted text-foreground mt-1" placeholder="e.g. 1 hour per use" />
+            <Label className="text-foreground text-sm font-semibold">Duration (minutes) (optional)</Label>
+            <Input type="number" min="1" max="180" value={durationMin} onChange={(e) => setDurationMin(e.target.value)} className="rounded-xl bg-muted text-foreground mt-1" placeholder="e.g. 60" />
+            {parseInt(durationMin) > 180 && <p className="text-[11px] text-destructive mt-1">Maximum 180 minutes</p>}
           </div>
           <Button onClick={handleSave} className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 font-bold h-11 btn-press">
             Save

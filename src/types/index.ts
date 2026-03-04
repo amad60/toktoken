@@ -10,8 +10,16 @@ export interface Activity {
   totalQuota: number;
   remainingQuota: number;
   durationText?: string;
+  durationMinutes?: number;
   logs: ActivityLog[];
   lastResetDate: string; // ISO date string YYYY-MM-DD
+}
+
+export interface TimerState {
+  activityId: string;
+  childId: string;
+  timerStartTimestamp: number; // Date.now()
+  timerDurationMinutes: number;
 }
 
 export interface Chore {
