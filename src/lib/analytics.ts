@@ -9,17 +9,15 @@ export function trackEvent(
   activityName = "",
   metadata: Record<string, unknown> = {},
 ) {
-  const body = {
+  const params = new URLSearchParams({
     event_name: eventName,
     user_id: getAnonymousUserId(),
     activity_name: activityName,
-    metadata: metadata,
-  };
-  console.log("[analytics] trackEvent body:", body);
-  fetch(ENDPOINT, {
-    method: "POST",
+    metadata: JSON.stringify(metadata),
+  });
+  console.log("[analytics] trackEvent params:", params.toString());
+  fetch(`${ENDPOINT}?${params.toString()}`, {
+    method: "GET",
     mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
   }).catch(() => {});
 }
