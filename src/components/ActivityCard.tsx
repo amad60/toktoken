@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Activity } from "@/types";
+import { ConfirmModal } from "@/components/ConfirmModal";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { getResetCountdown } from "@/lib/resetCountdown";
@@ -37,10 +38,7 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onStartTimer, 
 
   const handleStarTap = () => {
     if (isEmpty) return;
-    if (isRunning) {
-      // Show inline message instead
-      return;
-    }
+    if (isRunning) return;
     setConfirmOpen(true);
   };
 
@@ -117,33 +115,17 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onStartTimer, 
           )}
         </div>
 
-        {/* Inline confirmation popover */}
-        {confirmOpen && (
-          <div className="absolute top-full mt-1 z-20 bg-card border border-border rounded-xl shadow-lg p-3 w-full animate-bounce-in">
-            <p className="text-xs text-foreground text-center mb-2">
-              {durationMinutes
-                ? <>Start a <span className="font-bold">{durationMinutes} minute</span> timer?</>
-                : <>Use 1 token for <span className="font-bold">{name}</span>?</>
-              }
-            </p>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setConfirmOpen(false)}
-                className="flex-1 rounded-xl text-xs h-7 px-2"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleConfirm}
-                className="flex-1 rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 font-bold text-xs h-7 px-2 btn-press"
-              >
-                {durationMinutes ? "Start Timer" : "Confirm"}
-              </Button>
-            </div>
-          </div>
-        )}
       </div>
+
+      <ConfirmModal
+        open={confirmOpen}
+        activityName={name}
+        title={durationMinutes ? "Start timer?" : "Use Token?"}
+        message={durationMinutes ? `Start a ${durationMinutes} minute timer?` : undefined}
+        confirmText={durationMinutes ? "Start Timer" : "Confirm"}
+        onConfirm={handleConfirm}
+        onCancel={() => setConfirmOpen(false)}
+      />
 
       <div className="w-full space-y-1">
         <div className="flex justify-between text-xs">
