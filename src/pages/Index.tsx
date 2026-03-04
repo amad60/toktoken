@@ -40,7 +40,10 @@ const Index = () => {
   const selectedChild = data.children.find((c) => c.id === data.selectedChildId);
 
   // Track app open once
-  useEffect(() => { trackEvent("app_open"); }, []);
+  useEffect(() => {
+    trackEvent("app_open", selectedChild?.name || "", "", { has_child: !!selectedChild });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const hasChildren = data.children.length > 0;
 
   // onboarding
@@ -82,6 +85,7 @@ const Index = () => {
 
   const handleAddChild = (name: string) => {
     update(addChild(data, name));
+    trackEvent("child_created", name);
   };
 
   const handleOnboardAdd = () => {
