@@ -90,9 +90,23 @@ export function ActivityForm({ open, onClose, onSave, onDelete, initial }: Props
             {parseInt(quota) > 10 && <p className="text-[11px] text-destructive mt-1">Maximum 10 tokens per period</p>}
           </div>
           <div>
-            <Label className="text-foreground text-sm font-semibold">Duration (minutes) (optional)</Label>
-            <Input type="number" min="1" max="180" value={durationMin} onChange={(e) => setDurationMin(e.target.value)} className="rounded-xl bg-muted text-foreground mt-1" placeholder="e.g. 60" />
-            {parseInt(durationMin) > 180 && <p className="text-[11px] text-destructive mt-1">Maximum 180 minutes</p>}
+            <Label className="text-foreground text-sm font-semibold">Duration (optional)</Label>
+            <Select value={durationMin || "none"} onValueChange={(v) => setDurationMin(v === "none" ? "" : v)}>
+              <SelectTrigger className="rounded-xl bg-muted text-foreground mt-1">
+                <SelectValue placeholder="No timer" />
+              </SelectTrigger>
+              <SelectContent className="bg-card rounded-xl">
+                <SelectItem value="none">No timer</SelectItem>
+                <SelectItem value="10">10 minutes</SelectItem>
+                <SelectItem value="20">20 minutes</SelectItem>
+                <SelectItem value="30">30 minutes</SelectItem>
+                <SelectItem value="40">40 minutes</SelectItem>
+                <SelectItem value="50">50 minutes</SelectItem>
+                <SelectItem value="60">60 minutes</SelectItem>
+                <SelectItem value="90">90 minutes</SelectItem>
+                <SelectItem value="120">120 minutes</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <Button onClick={handleSave} className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 font-bold h-11 btn-press">
             Save
