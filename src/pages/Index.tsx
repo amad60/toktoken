@@ -462,6 +462,12 @@ const Index = () => {
       />
 
       <InstallPrompt />
+
+      <WeeklyReportModal
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+        child={selectedChild ?? null}
+      />
     </div>
   );
 };
