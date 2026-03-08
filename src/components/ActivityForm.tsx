@@ -111,6 +111,7 @@ export function ActivityForm({ open, onClose, onSave, onDelete, initial }: Props
                 <SelectItem value="120">120 minutes</SelectItem>
               </SelectContent>
             </Select>
+            <p className="text-xs text-muted-foreground mt-1">Optional. Starts a countdown when token is used.</p>
           </div>
           <Button onClick={handleSave} className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 font-bold h-11 btn-press">
             Save
