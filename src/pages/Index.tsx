@@ -512,6 +512,45 @@ const Index = () => {
         onClose={() => setReportOpen(false)}
         child={selectedChild ?? null}
       />
+      {/* Feedback modal */}
+      <Dialog open={feedbackOpen} onOpenChange={(open) => { setFeedbackOpen(open); if (!open) setFeedbackText(""); }}>
+        <DialogContent className="bg-card">
+          <DialogHeader>
+            <DialogTitle className="text-foreground">Send feedback</DialogTitle>
+            <DialogDescription className="sr-only">Share your thoughts or ideas</DialogDescription>
+          </DialogHeader>
+          <Textarea
+            placeholder="Share your thoughts or ideas..."
+            value={feedbackText}
+            onChange={(e) => setFeedbackText(e.target.value)}
+            className="rounded-xl bg-muted text-foreground min-h-[100px]"
+            autoFocus
+          />
+          <DialogFooter className="flex-row gap-2">
+            <Button variant="outline" onClick={() => { setFeedbackOpen(false); setFeedbackText(""); }} className="flex-1 rounded-xl">Cancel</Button>
+            <Button onClick={handleFeedbackSubmit} className="flex-1 rounded-xl bg-primary text-primary-foreground">Submit</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* About modal */}
+      <Dialog open={aboutOpen} onOpenChange={setAboutOpen}>
+        <DialogContent className="bg-card">
+          <DialogHeader>
+            <DialogTitle className="sr-only">About TokToken</DialogTitle>
+            <DialogDescription className="sr-only">About this app</DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col items-center text-center gap-3 py-4">
+            <span className="text-5xl">🎟️</span>
+            <h2 className="text-xl font-extrabold text-foreground tracking-tight">TokToken</h2>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              A small tool to help kids learn<br />effort and rewards.
+            </p>
+            <p className="text-muted-foreground text-xs italic">Built by a dad.</p>
+            <p className="text-primary text-xs font-medium mt-2">toktoken.lovable.app</p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
