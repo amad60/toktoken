@@ -286,7 +286,11 @@ const Index = () => {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
         <div className="flex flex-col items-center gap-4 max-w-xs text-center">
-          <span className="text-7xl">🎟️</span>
+          <div className="animate-[ticketPop_400ms_ease-out]">
+            <div className="animate-[ticketFloat_4s_ease-in-out_600ms_infinite]">
+              <span className="text-7xl">🎟️</span>
+            </div>
+          </div>
           <h1 className="text-2xl font-extrabold text-foreground tracking-tight">
             Toktok Token
           </h1>
@@ -295,7 +299,7 @@ const Index = () => {
           </p>
           <Button
             onClick={() => setOnboardOpen(true)}
-            className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 font-bold h-12 text-base btn-press mt-2"
+            className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 font-bold h-12 text-base btn-press mt-2 transition-all duration-150 active:scale-[0.98]"
           >
             Get Started
           </Button>
