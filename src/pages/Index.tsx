@@ -625,21 +625,7 @@ const Index = () => {
       </Dialog>
 
       {/* About modal */}
-      <Dialog open={aboutOpen} onOpenChange={(open) => {
-        setAboutOpen(open);
-        if (open && 'serviceWorker' in navigator) {
-          navigator.serviceWorker.ready.then((registration) => {
-            setTimeout(() => {
-              registration.showNotification("🔔 Toktok Test", {
-                body: "If you see this, background notifications work.",
-                icon: "/icons/icon-192.png",
-                badge: "/icons/icon-192.png",
-                vibrate: [200, 100, 200],
-              } as NotificationOptions);
-            }, 10000);
-          });
-        }
-      }}>
+      <Dialog open={aboutOpen} onOpenChange={setAboutOpen}>
         <DialogContent className="bg-card">
           <DialogHeader>
             <DialogTitle className="sr-only">About TokToken</DialogTitle>
@@ -653,7 +639,6 @@ const Index = () => {
             </p>
             <p className="text-muted-foreground text-xs italic">Built by a dad.</p>
             <p className="text-primary text-xs font-medium mt-2">toktoken.lovable.app</p>
-            <p className="text-muted-foreground text-[10px] mt-1">⏱ Debug: notification in 10s</p>
           </div>
         </DialogContent>
       </Dialog>
