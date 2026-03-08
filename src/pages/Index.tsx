@@ -534,16 +534,20 @@ const Index = () => {
             <DialogTitle className="text-foreground">Send feedback</DialogTitle>
             <DialogDescription className="sr-only">Share your thoughts or ideas</DialogDescription>
           </DialogHeader>
-          <Textarea
-            placeholder="Share your thoughts or ideas..."
-            value={feedbackText}
-            onChange={(e) => setFeedbackText(e.target.value)}
-            className="rounded-xl bg-muted text-foreground min-h-[100px]"
-            autoFocus
-          />
+          <div>
+            <Textarea
+              placeholder="Share your thoughts or ideas..."
+              value={feedbackText}
+              onChange={(e) => { if (e.target.value.length <= 300) setFeedbackText(e.target.value); }}
+              className="rounded-xl bg-muted text-foreground min-h-[100px]"
+              autoFocus
+              maxLength={300}
+            />
+            <p className="text-xs text-muted-foreground text-right mt-1">{feedbackText.length} / 300</p>
+          </div>
           <DialogFooter className="flex-row gap-2">
             <Button variant="outline" onClick={() => { setFeedbackOpen(false); setFeedbackText(""); }} className="flex-1 rounded-xl">Cancel</Button>
-            <Button onClick={handleFeedbackSubmit} className="flex-1 rounded-xl bg-primary text-primary-foreground">Submit</Button>
+            <Button onClick={handleFeedbackSubmit} disabled={feedbackText.trim().length < 5} className="flex-1 rounded-xl bg-primary text-primary-foreground">Submit</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
