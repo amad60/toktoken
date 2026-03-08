@@ -107,6 +107,9 @@ const Index = () => {
   // Timer start: use token + start timer
   const handleStartTimer = (activity: Activity) => {
     if (!selectedChild || !activity.durationMinutes) return;
+    if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
     update(useToken(data, selectedChild.id, activity.id));
     startTimer(activity.id, selectedChild.id, activity.durationMinutes);
     scheduleTimerNotification(activity.id, activity.name, activity.durationMinutes * 60 * 1000);

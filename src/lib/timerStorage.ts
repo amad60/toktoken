@@ -46,9 +46,6 @@ export async function scheduleTimerNotification(
   if (!('serviceWorker' in navigator)) return;
   try {
     const registration = await navigator.serviceWorker.ready;
-    if (Notification.permission === 'default') {
-      await Notification.requestPermission();
-    }
     if (Notification.permission === 'granted' && registration.active) {
       registration.active.postMessage({ type: 'SCHEDULE_TIMER', activityId, activityName, delayMs });
     }
