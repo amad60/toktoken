@@ -131,12 +131,24 @@ const Index = () => {
     }
   };
 
+  // Check if this is the very first token used across all activities
+  const isFirstTokenEver = (child: typeof selectedChild) => {
+    if (!child) return false;
+    const totalUsed = child.activities.reduce((sum, a) => sum + (a.logs?.length ?? 0), 0);
+    return totalUsed === 0;
+  };
+
   // Activity token usage (confirmation now handled inline in ActivityCard)
   const handleUseToken = (activity: Activity) => {
     if (!selectedChild) return;
+    const wasFirst = isFirstTokenEver(selectedChild);
     update(useToken(data, selectedChild.id, activity.id));
     fireConfetti();
     trackEvent("token_used", selectedChild.name, activity.name);
+    if (wasFirst && !localStorage.getItem("toktok-first-token-shown")) {
+      localStorage.setItem("toktok-first-token-shown", "1");
+      setTimeout(() => toast({ title: `First token used! ⭐ Great choice ${selectedChild.name}.` }), 300);
+    }
   };
 
   // Timer start: use token + start timer
