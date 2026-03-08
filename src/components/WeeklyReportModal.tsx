@@ -41,7 +41,7 @@ export function WeeklyReportModal({ open, onClose, child }: Props) {
       const canvas = await html2canvas(shareRef.current, {
         width: 1080,
         height: 1080,
-        scale: 1,
+        scale: 2,
         backgroundColor: null,
       });
 
