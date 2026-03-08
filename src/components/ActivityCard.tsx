@@ -123,6 +123,7 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onStartTimer, 
         title={durationMinutes ? "Start timer?" : "Use Token?"}
         message={durationMinutes ? `Start a ${durationMinutes} minute timer?` : undefined}
         confirmText={durationMinutes ? "Start Timer" : "Confirm"}
+        hint={durationMinutes ? `${durationMinutes} minutes. Make it count.` : "Spend wisely."}
         onConfirm={handleConfirm}
         onCancel={() => setConfirmOpen(false)}
       />

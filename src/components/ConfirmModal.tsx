@@ -7,11 +7,12 @@ interface Props {
   title?: string;
   message?: string;
   confirmText?: string;
+  hint?: string;
   onConfirm: () => void;
   onCancel: () => void;
 }
 
-export function ConfirmModal({ open, activityName, title, message, confirmText, onConfirm, onCancel }: Props) {
+export function ConfirmModal({ open, activityName, title, message, confirmText, hint, onConfirm, onCancel }: Props) {
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) onCancel(); }}>
       <DialogContent className="bg-card">
