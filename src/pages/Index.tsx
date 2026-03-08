@@ -65,6 +65,7 @@ const Index = () => {
   // activity form
   const [formOpen, setFormOpen] = useState(false);
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
+  const [presetInitial, setPresetInitial] = useState<{ name: string; icon: string; periodType: "weekly" | "monthly"; totalQuota: number; durationMinutes?: number } | null>(null);
 
   // chore form
   const [choreFormOpen, setChoreFormOpen] = useState(false);
@@ -421,11 +422,39 @@ const Index = () => {
         {tab === "spend" && selectedChild && (
           <>
             {selectedChild.activities.length === 0 && (
+              <>
               <div className="text-center mb-4 bg-muted/30 rounded-2xl p-5">
                 <p className="text-base font-bold text-foreground">Start your first token moment</p>
                 <p className="text-sm text-muted-foreground mt-1">Each activity has a limited number of tokens before it resets.</p>
                 <p className="text-sm text-muted-foreground mt-2">Add an activity your child can enjoy.</p>
               </div>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                {[
+                  { icon: "🎮", name: "Gaming", totalQuota: 3, periodType: "weekly" as const, durationMinutes: 60 },
+                  { icon: "📺", name: "Screen time", totalQuota: 5, periodType: "weekly" as const, durationMinutes: 30 },
+                  { icon: "🍦", name: "Ice cream", totalQuota: 1, periodType: "weekly" as const },
+                  { icon: "📱", name: "YouTube", totalQuota: 4, periodType: "weekly" as const, durationMinutes: 30 },
+                ].map((preset) => (
+                  <button
+                    key={preset.name}
+                    onClick={() => {
+                      requireMath(() => {
+                        setEditingActivity(null);
+                        setPresetInitial(preset);
+                        setFormOpen(true);
+                      });
+                    }}
+                    className="bg-card rounded-2xl p-4 shadow-[0_2px_12px_-4px_hsl(210_30%_80%/0.3)] border border-border flex flex-col items-center gap-1.5 btn-press hover:bg-muted/50 transition-colors"
+                  >
+                    <span className="text-4xl leading-none">{preset.icon}</span>
+                    <span className="text-sm font-bold text-foreground">{preset.name}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {preset.totalQuota}x/week{preset.durationMinutes ? ` · ${preset.durationMinutes}m` : ""}
+                    </span>
+                  </button>
+                ))}
+              </div>
+              </>
             )}
             <div className="grid grid-cols-2 gap-3 auto-rows-fr">
               {selectedChild.activities.map((act) => (
@@ -523,10 +552,10 @@ const Index = () => {
 
       <ActivityForm
         open={formOpen}
-        onClose={() => { setFormOpen(false); setEditingActivity(null); }}
+        onClose={() => { setFormOpen(false); setEditingActivity(null); setPresetInitial(null); }}
         onSave={handleSaveActivity}
         onDelete={editingActivity ? handleDeleteActivity : undefined}
-        initial={editingActivity ?? undefined}
+        initial={editingActivity ?? presetInitial ?? undefined}
       />
 
       <ChoreForm
