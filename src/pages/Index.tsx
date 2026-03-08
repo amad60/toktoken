@@ -153,10 +153,10 @@ const Index = () => {
   };
 
   // Timer start: use token + start timer
-  const handleStartTimer = (activity: Activity) => {
+  const handleStartTimer = async (activity: Activity) => {
     if (!selectedChild || !activity.durationMinutes) return;
     if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
-      Notification.requestPermission();
+      await Notification.requestPermission();
     }
     const wasFirst = isFirstTokenEver(selectedChild);
     update(useToken(data, selectedChild.id, activity.id));
