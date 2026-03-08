@@ -123,6 +123,7 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onStartTimer, 
         title={durationMinutes ? "Start timer?" : "Use Token?"}
         message={durationMinutes ? `Start a ${durationMinutes} minute timer?` : undefined}
         confirmText={durationMinutes ? "Start Timer" : "Confirm"}
+        hint={durationMinutes ? `${durationMinutes} minutes. Make it count.` : "Spend wisely."}
         onConfirm={handleConfirm}
         onCancel={() => setConfirmOpen(false)}
       />
@@ -145,7 +146,10 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onStartTimer, 
       {isEmpty && !isRunning && (
         <div className="flex flex-col items-center gap-1 w-full">
           <p className="text-[11px] text-destructive font-semibold text-center leading-tight">
-            No tokens left
+            That's it for now.
+          </p>
+          <p className="text-[10px] text-muted-foreground text-center">
+            {periodType === "monthly" ? "Resets next month." : "Resets next week."}
           </p>
           {earnCredits > 0 && (
             <Button

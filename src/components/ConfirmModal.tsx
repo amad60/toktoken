@@ -7,11 +7,12 @@ interface Props {
   title?: string;
   message?: string;
   confirmText?: string;
+  hint?: string;
   onConfirm: () => void;
   onCancel: () => void;
 }
 
-export function ConfirmModal({ open, activityName, title, message, confirmText, onConfirm, onCancel }: Props) {
+export function ConfirmModal({ open, activityName, title, message, confirmText, hint, onConfirm, onCancel }: Props) {
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) onCancel(); }}>
       <DialogContent className="bg-card">
@@ -21,6 +22,9 @@ export function ConfirmModal({ open, activityName, title, message, confirmText, 
         <p className="text-foreground text-center">
           {message || <>Use 1 token for <span className="font-bold">{activityName}</span>?</>}
         </p>
+        {hint && (
+          <p className="text-xs text-muted-foreground text-center italic">{hint}</p>
+        )}
         <div className="flex gap-2">
           <Button variant="outline" onClick={onCancel} className="flex-1 rounded-xl">
             Cancel
