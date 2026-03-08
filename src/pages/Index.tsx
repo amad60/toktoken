@@ -217,8 +217,13 @@ const Index = () => {
     if (editingActivity) {
       update(updateActivity(data, selectedChild.id, editingActivity.id, formData));
     } else {
+      const isFirst = selectedChild.activities.length === 0;
       update(addActivity(data, selectedChild.id, formData));
       trackEvent("activity_created", selectedChild.name, formData.name);
+      if (isFirst && !localStorage.getItem("toktok-first-activity-shown")) {
+        localStorage.setItem("toktok-first-activity-shown", "1");
+        setTimeout(() => toast({ title: "Nice start! Your first activity is ready." }), 300);
+      }
     }
     setFormOpen(false);
     setEditingActivity(null);
