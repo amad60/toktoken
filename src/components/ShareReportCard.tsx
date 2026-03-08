@@ -9,8 +9,9 @@ export const ShareReportCard = ({ childName, report }: Props) => {
     return (
       <div
         style={{
-          maxWidth: 820,
-          width: "100%",
+          width: 1080,
+          height: 1080,
+          background: "linear-gradient(180deg, #f4f6fb 0%, #f6efe8 100%)",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -18,6 +19,8 @@ export const ShareReportCard = ({ childName, report }: Props) => {
           fontFamily: "system-ui, sans-serif",
           position: "relative",
           overflow: "hidden",
+          padding: "80px 130px 60px",
+          boxSizing: "border-box",
         }}
       >
         {/* Confetti dots */}
