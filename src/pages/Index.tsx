@@ -19,10 +19,13 @@ import { MathGate } from "@/components/MathGate";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { WeeklyReportModal } from "@/components/WeeklyReportModal";
 import { Button } from "@/components/ui/button";
-import { Plus, Star, BarChart3 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Plus, Star, BarChart3, Menu, MessageSquare, Info } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { toast } from "@/hooks/use-toast";
 
 function fireConfetti() {
   confetti({
