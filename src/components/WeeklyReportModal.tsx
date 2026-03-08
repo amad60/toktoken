@@ -141,8 +141,22 @@ export function WeeklyReportModal({ open, onClose, child }: Props) {
         </div>
 
         {/* Hidden share card for image generation */}
-        <div style={{ position: "fixed", left: -9999, top: -9999, pointerEvents: "none" }}>
-          <ShareReportCard ref={shareRef} childName={child.name} report={report} />
+        <div
+          style={{
+            position: "fixed",
+            left: -9999,
+            top: -9999,
+            pointerEvents: "none",
+            width: 1080,
+            height: 1080,
+            background: "#ffffff",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          ref={shareRef}
+        >
+          <ShareReportCard childName={child.name} report={report} />
         </div>
       </DialogContent>
     </Dialog>
