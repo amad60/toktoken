@@ -54,7 +54,7 @@ export function ActivityForm({ open, onClose, onSave, onDelete, initial }: Props
         <div className="space-y-4">
           <div>
             <Label className="text-foreground text-sm font-semibold">Icon</Label>
-            <div className="flex flex-wrap gap-2 mt-1 max-h-28 overflow-y-auto">
+            <div className="grid grid-cols-8 gap-1.5 mt-2">
               {EMOJI_LIST.map((e) => (
                 <button
                   key={e}
