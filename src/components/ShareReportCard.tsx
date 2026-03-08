@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { WeeklyReportData } from "@/lib/weeklyReport";
 import { WeeklyReportData } from "@/lib/weeklyReport";
 
 interface Props {
