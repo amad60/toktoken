@@ -62,7 +62,11 @@ export function WeeklyReportModal({ open, onClose, child }: Props) {
       const file = new File([blob], `${child.name}-weekly-report.png`, { type: "image/png" });
 
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], title: `${child.name}'s Weekly Report` });
+        await navigator.share({
+          files: [file],
+          title: `${child.name}'s Week`,
+          text: `${child.name} completed ${report.choresCompleted} chores this week 👏\n\ntoktoken.lovable.app`,
+        });
       } else {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
