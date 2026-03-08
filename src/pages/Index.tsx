@@ -295,6 +295,21 @@ const Index = () => {
         style={{ background: "linear-gradient(135deg, hsl(210 70% 95% / 0.95), hsl(150 50% 95% / 0.95))" }}
       >
         <div className="flex items-center justify-center gap-2 mb-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted/50 transition-colors" aria-label="Menu">
+                <Menu className="h-5 w-5" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="rounded-xl shadow-lg">
+              <DropdownMenuItem onClick={() => setFeedbackOpen(true)} className="gap-2 cursor-pointer">
+                <MessageSquare className="h-4 w-4" /> Send feedback
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setAboutOpen(true)} className="gap-2 cursor-pointer">
+                <Info className="h-4 w-4" /> About
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <span className="text-2xl">🎟️</span>
           <h1 className="font-extrabold text-xl text-foreground tracking-tight">
             Toktok Token
