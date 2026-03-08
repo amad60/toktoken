@@ -16,6 +16,7 @@ import { ActivityLogs } from "@/components/ActivityLogs";
 import { ChoreLogs } from "@/components/ChoreLogs";
 import { MathGate } from "@/components/MathGate";
 import { InstallPrompt } from "@/components/InstallPrompt";
+import { WeeklyReportModal } from "@/components/WeeklyReportModal";
 import { Button } from "@/components/ui/button";
 import { Plus, Star, BarChart3 } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
