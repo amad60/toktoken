@@ -131,12 +131,24 @@ const Index = () => {
     }
   };
 
+  // Check if this is the very first token used across all activities
+  const isFirstTokenEver = (child: typeof selectedChild) => {
+    if (!child) return false;
+    const totalUsed = child.activities.reduce((sum, a) => sum + (a.logs?.length ?? 0), 0);
+    return totalUsed === 0;
+  };
+
   // Activity token usage (confirmation now handled inline in ActivityCard)
   const handleUseToken = (activity: Activity) => {
     if (!selectedChild) return;
+    const wasFirst = isFirstTokenEver(selectedChild);
     update(useToken(data, selectedChild.id, activity.id));
     fireConfetti();
     trackEvent("token_used", selectedChild.name, activity.name);
+    if (wasFirst && !localStorage.getItem("toktok-first-token-shown")) {
+      localStorage.setItem("toktok-first-token-shown", "1");
+      setTimeout(() => toast({ title: `First token used! ⭐ Great choice ${selectedChild.name}.` }), 300);
+    }
   };
 
   // Timer start: use token + start timer
@@ -145,10 +157,15 @@ const Index = () => {
     if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
       Notification.requestPermission();
     }
+    const wasFirst = isFirstTokenEver(selectedChild);
     update(useToken(data, selectedChild.id, activity.id));
     startTimer(activity.id, selectedChild.id, activity.durationMinutes);
     scheduleTimerNotification(activity.id, activity.name, activity.durationMinutes * 60 * 1000);
     trackEvent("token_used", selectedChild.name, activity.name);
+    if (wasFirst && !localStorage.getItem("toktok-first-token-shown")) {
+      localStorage.setItem("toktok-first-token-shown", "1");
+      setTimeout(() => toast({ title: `First token used! ⭐ Great choice ${selectedChild.name}.` }), 300);
+    }
   };
 
   // Timer finished - play beep via Web Audio API
@@ -217,8 +234,13 @@ const Index = () => {
     if (editingActivity) {
       update(updateActivity(data, selectedChild.id, editingActivity.id, formData));
     } else {
+      const isFirst = selectedChild.activities.length === 0;
       update(addActivity(data, selectedChild.id, formData));
       trackEvent("activity_created", selectedChild.name, formData.name);
+      if (isFirst && !localStorage.getItem("toktok-first-activity-shown")) {
+        localStorage.setItem("toktok-first-activity-shown", "1");
+        setTimeout(() => toast({ title: "Nice start! Your first activity is ready." }), 300);
+      }
     }
     setFormOpen(false);
     setEditingActivity(null);
@@ -397,29 +419,37 @@ const Index = () => {
       {/* Content */}
       <main className="container max-w-lg mx-auto px-4 pt-4">
         {tab === "spend" && selectedChild && (
-          <div className="grid grid-cols-2 gap-3 auto-rows-fr">
-            {selectedChild.activities.map((act) => (
-              <ActivityCard
-                key={act.id}
-                activity={act}
-                earnCredits={selectedChild.earnCredits}
-                onUseToken={() => handleUseToken(act)}
-                onStartTimer={() => handleStartTimer(act)}
-                onUseEarnCredit={() => handleUseEarnCredit(act)}
-                onViewHistory={() => setLogsActivity(act)}
-                onEdit={() => handleEditActivity(act)}
-                onTimerFinished={() => handleTimerFinished(act.name)}
-              />
-            ))}
-            {/* Add Activity card */}
-            <button
-              onClick={handleAddActivity}
-              className="bg-card rounded-2xl p-4 shadow-[0_2px_12px_-4px_hsl(210_30%_80%/0.3)] border border-dashed border-border flex flex-col items-center justify-center gap-2 min-h-0 btn-press hover:bg-muted/50 transition-colors"
-            >
-              <Plus className="h-10 w-10 text-muted-foreground" />
-              <span className="text-sm font-bold text-muted-foreground">Add Activity</span>
-            </button>
-          </div>
+          <>
+            {selectedChild.activities.length === 0 && (
+              <div className="text-center mb-4 bg-muted/30 rounded-2xl p-5">
+                <p className="text-base font-bold text-foreground">Start your first token moment</p>
+                <p className="text-sm text-muted-foreground mt-1">Small tasks help kids build good habits.</p>
+              </div>
+            )}
+            <div className="grid grid-cols-2 gap-3 auto-rows-fr">
+              {selectedChild.activities.map((act) => (
+                <ActivityCard
+                  key={act.id}
+                  activity={act}
+                  earnCredits={selectedChild.earnCredits}
+                  onUseToken={() => handleUseToken(act)}
+                  onStartTimer={() => handleStartTimer(act)}
+                  onUseEarnCredit={() => handleUseEarnCredit(act)}
+                  onViewHistory={() => setLogsActivity(act)}
+                  onEdit={() => handleEditActivity(act)}
+                  onTimerFinished={() => handleTimerFinished(act.name)}
+                />
+              ))}
+              {/* Add Activity card */}
+              <button
+                onClick={handleAddActivity}
+                className="bg-card rounded-2xl p-4 shadow-[0_2px_12px_-4px_hsl(210_30%_80%/0.3)] border border-dashed border-border flex flex-col items-center justify-center gap-2 min-h-0 btn-press hover:bg-muted/50 transition-colors"
+              >
+                <Plus className="h-10 w-10 text-muted-foreground" />
+                <span className="text-sm font-bold text-muted-foreground">Add Activity</span>
+              </button>
+            </div>
+          </>
         )}
 
         {tab === "earn" && selectedChild && (
