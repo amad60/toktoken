@@ -11,7 +11,7 @@ interface Props {
   onClose: () => void;
   onSave: (data: { name: string; icon: string; periodType: "weekly" | "monthly"; totalQuota: number; durationMinutes?: number }) => void;
   onDelete?: () => void;
-  initial?: Activity;
+  initial?: Partial<Activity>;
 }
 
 export function ActivityForm({ open, onClose, onSave, onDelete, initial }: Props) {
