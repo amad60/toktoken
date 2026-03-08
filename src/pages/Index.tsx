@@ -85,9 +85,24 @@ const Index = () => {
   const [aboutOpen, setAboutOpen] = useState(false);
 
   const handleFeedbackSubmit = () => {
-    if (feedbackText.trim()) {
-      trackEvent("feedback_submitted", selectedChild?.name || "", "feedback", { message: feedbackText.trim() });
+    const trimmed = feedbackText.trim();
+    if (trimmed.length < 5) return;
+
+    // Rate limit: 3 per day
+    const today = new Date().toDateString();
+    const lastDate = localStorage.getItem("feedback_last_date") || "";
+    let count = parseInt(localStorage.getItem("feedback_count_today") || "0", 10);
+    if (lastDate !== today) { count = 0; }
+    if (count >= 3) {
+      toast({ title: "Thanks! You've sent enough feedback for today." });
+      setFeedbackOpen(false);
+      setFeedbackText("");
+      return;
     }
+
+    trackEvent("feedback_submitted", selectedChild?.name || "", "feedback", { message: trimmed });
+    localStorage.setItem("feedback_last_date", today);
+    localStorage.setItem("feedback_count_today", String(count + 1));
     setFeedbackText("");
     setFeedbackOpen(false);
     toast({ title: "Thanks for the feedback!" });
