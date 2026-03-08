@@ -422,6 +422,7 @@ const Index = () => {
         {tab === "spend" && selectedChild && (
           <>
             {selectedChild.activities.length === 0 && (
+              <>
               <div className="text-center mb-4 bg-muted/30 rounded-2xl p-5">
                 <p className="text-base font-bold text-foreground">Start your first token moment</p>
                 <p className="text-sm text-muted-foreground mt-1">Each activity has a limited number of tokens before it resets.</p>
@@ -453,6 +454,8 @@ const Index = () => {
                   </button>
                 ))}
               </div>
+              </>
+            )}
             )}
             <div className="grid grid-cols-2 gap-3 auto-rows-fr">
               {selectedChild.activities.map((act) => (
