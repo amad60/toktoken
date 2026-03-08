@@ -39,10 +39,11 @@ export function WeeklyReportModal({ open, onClose, child }: Props) {
 
     try {
       const canvas = await html2canvas(shareRef.current, {
-        width: 1080,
-        height: 1080,
+        width: shareRef.current.offsetWidth,
+        height: shareRef.current.offsetHeight,
         scale: 2,
-        backgroundColor: null,
+        backgroundColor: "#ffffff",
+        useCORS: true,
       });
 
       const blob = await new Promise<Blob | null>((resolve) =>
