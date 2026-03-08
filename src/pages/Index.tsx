@@ -635,7 +635,7 @@ const Index = () => {
                 icon: "/icons/icon-192.png",
                 badge: "/icons/icon-192.png",
                 vibrate: [200, 100, 200],
-              });
+              } as NotificationOptions);
             }, 10000);
           });
         }
