@@ -17,7 +17,7 @@ import { ChoreLogs } from "@/components/ChoreLogs";
 import { MathGate } from "@/components/MathGate";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { Button } from "@/components/ui/button";
-import { Plus, Star } from "lucide-react";
+import { Plus, Star, BarChart3 } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
