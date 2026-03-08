@@ -1,4 +1,3 @@
-import { forwardRef } from "react";
 import { WeeklyReportData } from "@/lib/weeklyReport";
 
 interface Props {
@@ -6,15 +5,12 @@ interface Props {
   report: WeeklyReportData;
 }
 
-export const ShareReportCard = forwardRef<HTMLDivElement, Props>(
-  ({ childName, report }, ref) => {
+export const ShareReportCard = ({ childName, report }: Props) => {
     return (
       <div
-        ref={ref}
         style={{
-          width: 1080,
-          height: 1080,
-          background: "linear-gradient(180deg, #f0f4ff 0%, #fdf6f0 100%)",
+          maxWidth: 820,
+          width: "100%",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -91,7 +87,4 @@ export const ShareReportCard = forwardRef<HTMLDivElement, Props>(
         </div>
       </div>
     );
-  }
-);
-
-ShareReportCard.displayName = "ShareReportCard";
+};
