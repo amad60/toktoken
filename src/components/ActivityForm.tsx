@@ -54,12 +54,12 @@ export function ActivityForm({ open, onClose, onSave, onDelete, initial }: Props
         <div className="space-y-4">
           <div>
             <Label className="text-foreground text-sm font-semibold">Icon</Label>
-            <div className="flex flex-wrap gap-2 mt-1 max-h-28 overflow-y-auto">
+            <div className="grid grid-cols-8 gap-1.5 mt-2">
               {EMOJI_LIST.map((e) => (
                 <button
                   key={e}
                   onClick={() => setIcon(e)}
-                  className={`text-2xl w-10 h-10 rounded-lg flex items-center justify-center transition-all btn-press ${
+                  className={`text-2xl w-11 h-11 rounded-lg flex items-center justify-center transition-all btn-press ${
                     icon === e ? "bg-primary/20 ring-2 ring-primary" : "hover:bg-muted"
                   }`}
                 >
@@ -85,9 +85,12 @@ export function ActivityForm({ open, onClose, onSave, onDelete, initial }: Props
             </Select>
           </div>
           <div>
-            <Label className="text-foreground text-sm font-semibold">Tokens per period</Label>
+            <Label className="text-foreground text-sm font-semibold">How many times?</Label>
             <Input type="number" min="1" max="10" value={quota} onChange={(e) => setQuota(e.target.value)} className="rounded-xl bg-muted text-foreground mt-1" />
             {parseInt(quota) > 10 && <p className="text-[11px] text-destructive mt-1">Maximum 10 tokens per period</p>}
+            <p className="text-xs text-muted-foreground mt-1">
+              {periodType === "weekly" ? "Resets every Monday." : "Resets on the 1st of each month."}
+            </p>
           </div>
           <div>
             <Label className="text-foreground text-sm font-semibold">Duration (optional)</Label>
@@ -108,6 +111,7 @@ export function ActivityForm({ open, onClose, onSave, onDelete, initial }: Props
                 <SelectItem value="120">120 minutes</SelectItem>
               </SelectContent>
             </Select>
+            <p className="text-xs text-muted-foreground mt-1">Optional. Starts a countdown when token is used.</p>
           </div>
           <Button onClick={handleSave} className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 font-bold h-11 btn-press">
             Save
