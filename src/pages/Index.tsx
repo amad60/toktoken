@@ -157,10 +157,15 @@ const Index = () => {
     if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
       Notification.requestPermission();
     }
+    const wasFirst = isFirstTokenEver(selectedChild);
     update(useToken(data, selectedChild.id, activity.id));
     startTimer(activity.id, selectedChild.id, activity.durationMinutes);
     scheduleTimerNotification(activity.id, activity.name, activity.durationMinutes * 60 * 1000);
     trackEvent("token_used", selectedChild.name, activity.name);
+    if (wasFirst && !localStorage.getItem("toktok-first-token-shown")) {
+      localStorage.setItem("toktok-first-token-shown", "1");
+      setTimeout(() => toast({ title: `First token used! ⭐ Great choice ${selectedChild.name}.` }), 300);
+    }
   };
 
   // Timer finished - play beep via Web Audio API
