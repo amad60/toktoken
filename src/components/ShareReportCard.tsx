@@ -87,7 +87,7 @@ export const ShareReportCard = forwardRef<HTMLDivElement, Props>(
         </div>
 
         <div style={{ fontSize: 24, color: "#94a3b8", fontWeight: 500, letterSpacing: "0.5px", opacity: 0.7 }}>
-          TokTok Token · toktoken.lovable.app
+          toktoken.lovable.app
         </div>
       </div>
     );

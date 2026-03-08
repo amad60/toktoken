@@ -39,10 +39,11 @@ export function WeeklyReportModal({ open, onClose, child }: Props) {
 
     try {
       const canvas = await html2canvas(shareRef.current, {
-        width: 1080,
-        height: 1080,
+        width: shareRef.current.offsetWidth,
+        height: shareRef.current.offsetHeight,
         scale: 2,
-        backgroundColor: null,
+        backgroundColor: "#ffffff",
+        useCORS: true,
       });
 
       const blob = await new Promise<Blob | null>((resolve) =>
@@ -61,7 +62,11 @@ export function WeeklyReportModal({ open, onClose, child }: Props) {
       const file = new File([blob], `${child.name}-weekly-report.png`, { type: "image/png" });
 
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], title: `${child.name}'s Weekly Report` });
+        await navigator.share({
+          files: [file],
+          title: `${child.name}'s Week`,
+          text: `${child.name} completed ${report.choresCompleted} chores this week 👏\n\ntoktoken.lovable.app`,
+        });
       } else {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
