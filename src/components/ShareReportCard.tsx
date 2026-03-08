@@ -88,7 +88,4 @@ export const ShareReportCard = ({ childName, report }: Props) => {
         </div>
       </div>
     );
-  }
-);
-
-ShareReportCard.displayName = "ShareReportCard";
+};
