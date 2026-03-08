@@ -79,6 +79,20 @@ const Index = () => {
   const [logsChore, setLogsChore] = useState<Chore | null>(null);
   const [reportOpen, setReportOpen] = useState(false);
 
+  // burger menu
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [feedbackText, setFeedbackText] = useState("");
+  const [aboutOpen, setAboutOpen] = useState(false);
+
+  const handleFeedbackSubmit = () => {
+    if (feedbackText.trim()) {
+      trackEvent("feedback_submitted", selectedChild?.name || "", "feedback", { message: feedbackText.trim() });
+    }
+    setFeedbackText("");
+    setFeedbackOpen(false);
+    toast({ title: "Thanks for the feedback!" });
+  };
+
   const update = useCallback((newData: AppData) => {
     setData(newData);
   }, []);
