@@ -306,10 +306,11 @@ const Index = () => {
     <div className="min-h-screen bg-background pb-8">
       {/* Sticky header — compact */}
       <header
-        className="sticky top-0 z-10 border-b border-border px-4 py-3 bg-background/95 backdrop-blur-sm shadow-[0_2px_12px_-4px_hsl(210_30%_80%/0.3)] transition-shadow"
+        className="sticky top-0 z-10 border-b border-border py-3 bg-background/95 backdrop-blur-sm shadow-[0_2px_12px_-4px_hsl(210_30%_80%/0.3)] transition-shadow"
         style={{ background: "linear-gradient(135deg, hsl(210 70% 95% / 0.95), hsl(150 50% 95% / 0.95))" }}
       >
-        <div className="flex items-center justify-center gap-2 mb-2">
+        <div className="container max-w-lg mx-auto px-4">
+        <div className="flex items-center gap-2 mb-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted/50 transition-colors" aria-label="Menu">
