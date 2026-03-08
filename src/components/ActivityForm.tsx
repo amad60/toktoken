@@ -85,9 +85,12 @@ export function ActivityForm({ open, onClose, onSave, onDelete, initial }: Props
             </Select>
           </div>
           <div>
-            <Label className="text-foreground text-sm font-semibold">Tokens per period</Label>
+            <Label className="text-foreground text-sm font-semibold">How many times?</Label>
             <Input type="number" min="1" max="10" value={quota} onChange={(e) => setQuota(e.target.value)} className="rounded-xl bg-muted text-foreground mt-1" />
             {parseInt(quota) > 10 && <p className="text-[11px] text-destructive mt-1">Maximum 10 tokens per period</p>}
+            <p className="text-xs text-muted-foreground mt-1">
+              {periodType === "weekly" ? "Resets every Monday." : "Resets on the 1st of each month."}
+            </p>
           </div>
           <div>
             <Label className="text-foreground text-sm font-semibold">Duration (optional)</Label>
