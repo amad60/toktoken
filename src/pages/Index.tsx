@@ -5,7 +5,7 @@ import {
   loadData, saveData, addChild, addActivity, updateActivity, deleteActivity,
   useToken, addChore, updateChore, deleteChore, completeChore, useEarnCredit,
 } from "@/lib/storage";
-import { startTimer } from "@/lib/timerStorage";
+import { startTimer, scheduleTimerNotification } from "@/lib/timerStorage";
 import { ChildSelector } from "@/components/ChildSelector";
 import { ActivityCard } from "@/components/ActivityCard";
 import { ChoreCard } from "@/components/ChoreCard";
@@ -109,6 +109,7 @@ const Index = () => {
     if (!selectedChild || !activity.durationMinutes) return;
     update(useToken(data, selectedChild.id, activity.id));
     startTimer(activity.id, selectedChild.id, activity.durationMinutes);
+    scheduleTimerNotification(activity.id, activity.name, activity.durationMinutes * 60 * 1000);
     trackEvent("token_used", selectedChild.name, activity.name);
   };
 

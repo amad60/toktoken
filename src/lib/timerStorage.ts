@@ -37,3 +37,28 @@ export function getRemainingMs(timer: TimerState): number {
   const totalMs = timer.timerDurationMinutes * 60 * 1000;
   return Math.max(0, totalMs - elapsed);
 }
+
+export async function scheduleTimerNotification(
+  activityId: string,
+  activityName: string,
+  delayMs: number
+): Promise<void> {
+  if (!('serviceWorker' in navigator)) return;
+  try {
+    const registration = await navigator.serviceWorker.ready;
+    if (Notification.permission === 'default') {
+      await Notification.requestPermission();
+    }
+    if (Notification.permission === 'granted' && registration.active) {
+      registration.active.postMessage({ type: 'SCHEDULE_TIMER', activityId, activityName, delayMs });
+    }
+  } catch {}
+}
+
+export async function cancelTimerNotification(activityId: string): Promise<void> {
+  if (!('serviceWorker' in navigator)) return;
+  try {
+    const registration = await navigator.serviceWorker.ready;
+    registration.active?.postMessage({ type: 'CANCEL_TIMER', activityId });
+  } catch {}
+}
