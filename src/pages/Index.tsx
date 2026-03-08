@@ -391,6 +391,7 @@ const Index = () => {
             </button>
           </div>
         )}
+        </div>
       </header>
 
       {/* Content */}
