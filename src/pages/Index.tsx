@@ -5,6 +5,7 @@ import {
   loadData, saveData, addChild, addActivity, updateActivity, deleteActivity,
   useToken, addChore, updateChore, deleteChore, completeChore, useEarnCredit,
 } from "@/lib/storage";
+import { getWeeklyReport } from "@/lib/weeklyReport";
 import { startTimer, scheduleTimerNotification } from "@/lib/timerStorage";
 import { ChildSelector } from "@/components/ChildSelector";
 import { ActivityCard } from "@/components/ActivityCard";

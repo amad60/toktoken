@@ -57,16 +57,16 @@ export function getWeeklyReport(child: Child): WeeklyReportData {
 
 export function getProudMoment(childName: string, report: WeeklyReportData): string {
   if (report.choresCompleted === 1) {
-    return `${childName} completed the first chore this week. Great start!`;
+    return `${childName} completed their first chore this week.`;
   }
   if (report.choresCompleted >= 10) {
-    return `${childName} showed great effort this week!`;
+    return `${childName} completed ${report.choresCompleted} chores and stayed active throughout the week.`;
   }
   if (report.activeDays >= 4) {
-    return `${childName} stayed very consistent this week!`;
+    return `${childName} was active on ${report.activeDays} days this week.`;
   }
   if (report.rewardsUsed >= 3) {
-    return `${childName} enjoyed the rewards this week!`;
+    return `${childName} completed ${report.choresCompleted} chores and used rewards frequently.`;
   }
-  return `${childName} is building great habits.`;
+  return `${childName} started using tokens this week.`;
 }

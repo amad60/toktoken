@@ -62,7 +62,7 @@ export function WeeklyReportModal({ open, onClose, child }: Props) {
         <div className="mt-4 bg-accent/10 rounded-2xl p-4 text-center">
           <div className="flex items-center justify-center gap-1 mb-1">
             <Sparkles className="h-4 w-4 text-accent" />
-            <span className="text-sm font-bold text-accent-foreground">Proud Moment</span>
+            <span className="text-sm font-bold text-accent-foreground">This week</span>
             <Sparkles className="h-4 w-4 text-accent" />
           </div>
           <p className="text-sm font-semibold text-foreground leading-relaxed">
