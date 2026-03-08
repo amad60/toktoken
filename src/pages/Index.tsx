@@ -297,10 +297,21 @@ const Index = () => {
             />
           </div>
           <button
-            onClick={() => setReportOpen(true)}
+            onClick={() => {
+              setReportOpen(true);
+              if (selectedChild) {
+                const report = getWeeklyReport(selectedChild);
+                trackEvent("report_view", selectedChild.name, "weekly_report", {
+                  tokens_earned: report.tokensEarned,
+                  chores_completed: report.choresCompleted,
+                  rewards_used: report.rewardsUsed,
+                  active_days: report.activeDays,
+                });
+              }
+            }}
             aria-label="Weekly report"
             title="Weekly report"
-            className="h-12 w-12 rounded-xl bg-muted text-muted-foreground hover:bg-muted/70 shrink-0 btn-press flex items-center justify-center transition-colors"
+            className="h-12 w-12 rounded-xl bg-primary/10 text-foreground/70 hover:bg-primary/20 shrink-0 btn-press flex items-center justify-center transition-colors"
           >
             <BarChart3 className="h-5 w-5" />
           </button>
