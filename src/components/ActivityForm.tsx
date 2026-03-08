@@ -97,6 +97,7 @@ export function ActivityForm({ open, onClose, onSave, onDelete, initial }: Props
               </SelectTrigger>
               <SelectContent className="bg-card rounded-xl">
                 <SelectItem value="none">No timer</SelectItem>
+                <SelectItem value="1">1 minute</SelectItem>
                 <SelectItem value="10">10 minutes</SelectItem>
                 <SelectItem value="20">20 minutes</SelectItem>
                 <SelectItem value="30">30 minutes</SelectItem>
