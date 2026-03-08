@@ -65,6 +65,7 @@ const Index = () => {
   // activity form
   const [formOpen, setFormOpen] = useState(false);
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
+  const [presetInitial, setPresetInitial] = useState<{ name: string; icon: string; periodType: "weekly" | "monthly"; totalQuota: number; durationMinutes?: number } | null>(null);
 
   // chore form
   const [choreFormOpen, setChoreFormOpen] = useState(false);
