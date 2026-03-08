@@ -147,12 +147,6 @@ export function WeeklyReportModal({ open, onClose, child }: Props) {
             left: -9999,
             top: -9999,
             pointerEvents: "none",
-            width: 1080,
-            height: 1080,
-            background: "#ffffff",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
           }}
           ref={shareRef}
         >
