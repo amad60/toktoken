@@ -42,7 +42,7 @@ export function WeeklyReportModal({ open, onClose, child }: Props) {
         width: 1080,
         height: 1080,
         scale: 2,
-        backgroundColor: null,
+        backgroundColor: "#ffffff",
         useCORS: true,
       });
 
