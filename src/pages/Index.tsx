@@ -288,17 +288,16 @@ const Index = () => {
         <div className="flex flex-col items-center gap-4 max-w-xs text-center">
           <span className="text-7xl">🎟️</span>
           <h1 className="text-2xl font-extrabold text-foreground tracking-tight">
-            Welcome to Toktok Token
+            Toktok Token
           </h1>
           <p className="text-muted-foreground text-sm leading-relaxed">
-            Create your first child to start learning to choose.
+            Help your child learn that good things are worth waiting for.
           </p>
           <Button
             onClick={() => setOnboardOpen(true)}
             className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 font-bold h-12 text-base btn-press mt-2"
           >
-            <Plus className="h-5 w-5 mr-2" />
-            Add Child
+            Get Started
           </Button>
         </div>
 
