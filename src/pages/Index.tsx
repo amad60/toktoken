@@ -73,6 +73,7 @@ const Index = () => {
   // logs
   const [logsActivity, setLogsActivity] = useState<Activity | null>(null);
   const [logsChore, setLogsChore] = useState<Chore | null>(null);
+  const [reportOpen, setReportOpen] = useState(false);
 
   const update = useCallback((newData: AppData) => {
     setData(newData);
