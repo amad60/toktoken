@@ -550,10 +550,10 @@ const Index = () => {
 
       <ActivityForm
         open={formOpen}
-        onClose={() => { setFormOpen(false); setEditingActivity(null); }}
+        onClose={() => { setFormOpen(false); setEditingActivity(null); setPresetInitial(null); }}
         onSave={handleSaveActivity}
         onDelete={editingActivity ? handleDeleteActivity : undefined}
-        initial={editingActivity ?? undefined}
+        initial={editingActivity ?? presetInitial ?? undefined}
       />
 
       <ChoreForm
