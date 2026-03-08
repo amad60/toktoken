@@ -25,7 +25,6 @@ export function ConfirmModal({ open, activityName, title, message, confirmText, 
         {hint && (
           <p className="text-xs text-muted-foreground text-center italic">{hint}</p>
         )}
-        </p>
         <div className="flex gap-2">
           <Button variant="outline" onClick={onCancel} className="flex-1 rounded-xl">
             Cancel
