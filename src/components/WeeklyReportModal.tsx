@@ -1,7 +1,12 @@
+import { useRef, useState } from "react";
 import { Child } from "@/types";
 import { getWeeklyReport, getProudMoment } from "@/lib/weeklyReport";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Share } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ShareReportCard } from "@/components/ShareReportCard";
+import { trackEvent } from "@/lib/analytics";
+import html2canvas from "html2canvas";
 
 interface Props {
   open: boolean;
@@ -20,10 +25,57 @@ function MetricCard({ emoji, label, value }: { emoji: string; label: string; val
 }
 
 export function WeeklyReportModal({ open, onClose, child }: Props) {
+  const shareRef = useRef<HTMLDivElement>(null);
+  const [sharing, setSharing] = useState(false);
+
   if (!child) return null;
 
   const report = getWeeklyReport(child);
   const proudMessage = getProudMoment(child.name, report);
+
+  const handleShare = async () => {
+    if (!shareRef.current || sharing) return;
+    setSharing(true);
+
+    try {
+      const canvas = await html2canvas(shareRef.current, {
+        width: 1080,
+        height: 1080,
+        scale: 1,
+        backgroundColor: null,
+      });
+
+      const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob(resolve, "image/png")
+      );
+
+      if (!blob) return;
+
+      trackEvent("report_shared", child.name, "weekly_report", {
+        tokens_earned: report.tokensEarned,
+        chores_completed: report.choresCompleted,
+        rewards_used: report.rewardsUsed,
+        active_days: report.activeDays,
+      });
+
+      const file = new File([blob], `${child.name}-weekly-report.png`, { type: "image/png" });
+
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: `${child.name}'s Weekly Report` });
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = file.name;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    } catch {
+      // user cancelled or error
+    } finally {
+      setSharing(false);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
@@ -68,6 +120,24 @@ export function WeeklyReportModal({ open, onClose, child }: Props) {
           <p className="text-sm font-semibold text-foreground leading-relaxed">
             {proudMessage}
           </p>
+        </div>
+
+        <div className="mt-2 flex justify-center">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="rounded-full bg-muted/50 hover:bg-muted text-muted-foreground gap-2 px-5"
+            onClick={handleShare}
+            disabled={sharing}
+          >
+            <Share className="h-4 w-4" />
+            {sharing ? "Generating…" : "Share weekly report"}
+          </Button>
+        </div>
+
+        {/* Hidden share card for image generation */}
+        <div style={{ position: "fixed", left: -9999, top: -9999, pointerEvents: "none" }}>
+          <ShareReportCard ref={shareRef} childName={child.name} report={report} />
         </div>
       </DialogContent>
     </Dialog>
