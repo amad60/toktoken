@@ -109,6 +109,7 @@ const Index = () => {
     if (!selectedChild || !activity.durationMinutes) return;
     update(useToken(data, selectedChild.id, activity.id));
     startTimer(activity.id, selectedChild.id, activity.durationMinutes);
+    scheduleTimerNotification(activity.id, activity.name, activity.durationMinutes * 60 * 1000);
     trackEvent("token_used", selectedChild.name, activity.name);
   };
 

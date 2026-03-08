@@ -34,3 +34,30 @@ self.addEventListener('fetch', (event) => {
     caches.match(event.request).then((cached) => cached || fetch(event.request))
   );
 });
+
+const _scheduledTimers = {};
+
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SCHEDULE_TIMER') {
+    const { activityId, activityName, delayMs } = event.data;
+    if (_scheduledTimers[activityId]) clearTimeout(_scheduledTimers[activityId]);
+    _scheduledTimers[activityId] = setTimeout(() => {
+      self.registration.showNotification('⏰ Time is up!', {
+        body: activityName + ' timer has finished!',
+        icon: '/icons/icon-192.png',
+        badge: '/icons/icon-192.png',
+        tag: 'timer-' + activityId,
+        renotify: true,
+        requireInteraction: true,
+      });
+      delete _scheduledTimers[activityId];
+    }, delayMs);
+  }
+  if (event.data?.type === 'CANCEL_TIMER') {
+    const { activityId } = event.data;
+    if (_scheduledTimers[activityId]) {
+      clearTimeout(_scheduledTimers[activityId]);
+      delete _scheduledTimers[activityId];
+    }
+  }
+});
