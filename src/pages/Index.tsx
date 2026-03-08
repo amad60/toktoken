@@ -85,9 +85,24 @@ const Index = () => {
   const [aboutOpen, setAboutOpen] = useState(false);
 
   const handleFeedbackSubmit = () => {
-    if (feedbackText.trim()) {
-      trackEvent("feedback_submitted", selectedChild?.name || "", "feedback", { message: feedbackText.trim() });
+    const trimmed = feedbackText.trim();
+    if (trimmed.length < 5) return;
+
+    // Rate limit: 3 per day
+    const today = new Date().toDateString();
+    const lastDate = localStorage.getItem("feedback_last_date") || "";
+    let count = parseInt(localStorage.getItem("feedback_count_today") || "0", 10);
+    if (lastDate !== today) { count = 0; }
+    if (count >= 3) {
+      toast({ title: "Thanks! You've sent enough feedback for today." });
+      setFeedbackOpen(false);
+      setFeedbackText("");
+      return;
     }
+
+    trackEvent("feedback_submitted", selectedChild?.name || "", "feedback", { message: trimmed });
+    localStorage.setItem("feedback_last_date", today);
+    localStorage.setItem("feedback_count_today", String(count + 1));
     setFeedbackText("");
     setFeedbackOpen(false);
     toast({ title: "Thanks for the feedback!" });
@@ -519,16 +534,20 @@ const Index = () => {
             <DialogTitle className="text-foreground">Send feedback</DialogTitle>
             <DialogDescription className="sr-only">Share your thoughts or ideas</DialogDescription>
           </DialogHeader>
-          <Textarea
-            placeholder="Share your thoughts or ideas..."
-            value={feedbackText}
-            onChange={(e) => setFeedbackText(e.target.value)}
-            className="rounded-xl bg-muted text-foreground min-h-[100px]"
-            autoFocus
-          />
+          <div>
+            <Textarea
+              placeholder="Share your thoughts or ideas..."
+              value={feedbackText}
+              onChange={(e) => { if (e.target.value.length <= 300) setFeedbackText(e.target.value); }}
+              className="rounded-xl bg-muted text-foreground min-h-[100px]"
+              autoFocus
+              maxLength={300}
+            />
+            <p className="text-xs text-muted-foreground text-right mt-1">{feedbackText.length} / 300</p>
+          </div>
           <DialogFooter className="flex-row gap-2">
             <Button variant="outline" onClick={() => { setFeedbackOpen(false); setFeedbackText(""); }} className="flex-1 rounded-xl">Cancel</Button>
-            <Button onClick={handleFeedbackSubmit} className="flex-1 rounded-xl bg-primary text-primary-foreground">Submit</Button>
+            <Button onClick={handleFeedbackSubmit} disabled={feedbackText.trim().length < 5} className="flex-1 rounded-xl bg-primary text-primary-foreground">Submit</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
