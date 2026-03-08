@@ -1,5 +1,4 @@
 import { WeeklyReportData } from "@/lib/weeklyReport";
-import { WeeklyReportData } from "@/lib/weeklyReport";
 
 interface Props {
   childName: string;
