@@ -59,7 +59,7 @@ export function ActivityForm({ open, onClose, onSave, onDelete, initial }: Props
                 <button
                   key={e}
                   onClick={() => setIcon(e)}
-                  className={`text-2xl w-10 h-10 rounded-lg flex items-center justify-center transition-all btn-press ${
+                  className={`text-2xl w-11 h-11 rounded-lg flex items-center justify-center transition-all btn-press ${
                     icon === e ? "bg-primary/20 ring-2 ring-primary" : "hover:bg-muted"
                   }`}
                 >
