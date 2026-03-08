@@ -287,12 +287,24 @@ const Index = () => {
             </span>
           )}
         </div>
-        <ChildSelector
-          children={data.children}
-          selectedId={data.selectedChildId}
-          onSelect={handleSelectChild}
-          onAddChild={handleAddChild}
-        />
+        <div className="flex items-center gap-2">
+          <div className="flex-1">
+            <ChildSelector
+              children={data.children}
+              selectedId={data.selectedChildId}
+              onSelect={handleSelectChild}
+              onAddChild={handleAddChild}
+            />
+          </div>
+          <button
+            onClick={() => setReportOpen(true)}
+            aria-label="Weekly report"
+            title="Weekly report"
+            className="h-12 w-12 rounded-xl bg-muted text-muted-foreground hover:bg-muted/70 shrink-0 btn-press flex items-center justify-center transition-colors"
+          >
+            <BarChart3 className="h-5 w-5" />
+          </button>
+        </div>
 
         {/* Spend / Earn toggle */}
         {selectedChild && (
