@@ -100,7 +100,7 @@ export function WeeklyReportModal({ open, onClose, child }: Props) {
             value={report.tokensEarned > 0 ? String(report.tokensEarned) : "Not yet"}
           />
           <MetricCard
-            emoji="🧹"
+            emoji="🏅"
             label="Chores Completed"
             value={report.choresCompleted > 0 ? String(report.choresCompleted) : "Not yet"}
           />
