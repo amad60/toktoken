@@ -79,7 +79,7 @@ export const ShareReportCard = forwardRef<HTMLDivElement, Props>(
               <div style={{ fontSize: 72, fontWeight: 800, color: "#1e293b", lineHeight: 1.2 }}>
                 {m.value}
               </div>
-              <div style={{ fontSize: 28, color: "#64748b", fontWeight: 600 }}>
+              <div style={{ fontSize: 28, color: "#64748b", fontWeight: 500, lineHeight: 1.4, letterSpacing: 0, whiteSpace: "normal", display: "block", textAlign: "center" }}>
                 {m.label}
               </div>
             </div>
