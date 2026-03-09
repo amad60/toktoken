@@ -329,7 +329,6 @@ const Index = () => {
               Next →
             </Button>
           </div>
-          <InstallPrompt />
         </div>
       );
     }
