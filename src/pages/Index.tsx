@@ -431,6 +431,9 @@ const Index = () => {
               <DropdownMenuItem onClick={() => setAboutOpen(true)} className="gap-2 cursor-pointer">
                 <Info className="h-4 w-4" /> About
               </DropdownMenuItem>
+              <DropdownMenuItem asChild className="gap-2 cursor-pointer">
+                <a href="/card">🌱 Cek Tumbuh Kembang</a>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <span className="text-2xl">🎟️</span>
