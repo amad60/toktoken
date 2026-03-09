@@ -223,7 +223,12 @@ const Index = () => {
 
   // Activity CRUD
   const handleAddActivity = () => {
-    requireMath(() => { setEditingActivity(null); setFormOpen(true); });
+    if (selectedChild && selectedChild.activities.length === 0) {
+      setEditingActivity(null);
+      setFormOpen(true);
+    } else {
+      requireMath(() => { setEditingActivity(null); setFormOpen(true); });
+    }
   };
 
   const handleEditActivity = (activity: Activity) => {
@@ -403,7 +408,7 @@ const Index = () => {
                   : "bg-muted text-muted-foreground"
               }`}
             >
-              Spend
+              🎯 Activities
             </button>
             <button
               onClick={() => setTab("earn")}
@@ -413,7 +418,7 @@ const Index = () => {
                   : "bg-muted text-muted-foreground"
               }`}
             >
-              ⭐ Earn
+              ⭐ Chores
             </button>
           </div>
         )}
@@ -441,11 +446,9 @@ const Index = () => {
                   <button
                     key={preset.name}
                     onClick={() => {
-                      requireMath(() => {
-                        setEditingActivity(null);
-                        setPresetInitial(preset);
-                        setFormOpen(true);
-                      });
+                      setEditingActivity(null);
+                      setPresetInitial(preset);
+                      setFormOpen(true);
                     }}
                     className="bg-card rounded-2xl p-4 shadow-[0_2px_12px_-4px_hsl(210_30%_80%/0.3)] border border-border flex flex-col items-center gap-1.5 btn-press hover:bg-muted/50 transition-colors"
                   >

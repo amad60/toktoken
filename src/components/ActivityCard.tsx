@@ -21,7 +21,8 @@ const MAX_VISIBLE = 2;
 
 export function ActivityCard({ activity, earnCredits, onUseToken, onStartTimer, onUseEarnCredit, onViewHistory, onEdit, onTimerFinished }: Props) {
   const { icon, name, remainingQuota, totalQuota, durationText, durationMinutes, periodType } = activity;
-  const progress = totalQuota > 0 ? (remainingQuota / totalQuota) * 100 : 0;
+  const usedQuota = totalQuota - remainingQuota;
+  const progress = totalQuota > 0 ? (usedQuota / totalQuota) * 100 : 0;
   const isEmpty = remainingQuota === 0;
   const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -131,7 +132,7 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onStartTimer, 
       <div className="w-full space-y-1">
         <div className="flex justify-between text-xs">
           <span className="font-bold text-foreground">
-            {remainingQuota} / {totalQuota}
+            {usedQuota} of {totalQuota} used
           </span>
           <span className="text-muted-foreground text-[10px]">
             {getResetCountdown(periodType)}
@@ -139,7 +140,7 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onStartTimer, 
         </div>
         <Progress
           value={progress}
-          className={`h-2 rounded-full bg-muted ${isEmpty ? "[&>div]:bg-destructive" : "[&>div]:bg-secondary"} [&>div]:rounded-full`}
+          className={`h-2 rounded-full bg-secondary ${isEmpty ? "[&>div]:bg-destructive" : "[&>div]:bg-muted/60"} [&>div]:rounded-full`}
         />
       </div>
 
