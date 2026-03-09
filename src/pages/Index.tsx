@@ -52,8 +52,11 @@ const Index = () => {
   const hasChildren = data.children.length > 0;
 
   // onboarding
-  const [onboardOpen, setOnboardOpen] = useState(false);
+  const [onboardStep, setOnboardStep] = useState<"name" | "pick" | null>(
+    data.children.length === 0 ? "name" : null
+  );
   const [onboardName, setOnboardName] = useState("");
+  const [selectedPresets, setSelectedPresets] = useState<string[]>([]);
 
   // confirm chore complete
   const [confirmChore, setConfirmChore] = useState<Chore | null>(null);
