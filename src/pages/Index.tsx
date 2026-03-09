@@ -305,7 +305,7 @@ const Index = () => {
             <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Toktok Token</h1>
             <p className="text-muted-foreground text-sm">What's your child's name?</p>
             <Input
-              placeholder="e.g. Aisha, Maheer..."
+              placeholder="Child's name"
               value={onboardName}
               onChange={(e) => setOnboardName(e.target.value)}
               className="rounded-xl bg-muted text-foreground text-center text-base h-12"
