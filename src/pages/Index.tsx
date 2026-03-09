@@ -52,8 +52,11 @@ const Index = () => {
   const hasChildren = data.children.length > 0;
 
   // onboarding
-  const [onboardOpen, setOnboardOpen] = useState(false);
+  const [onboardStep, setOnboardStep] = useState<"name" | "pick" | null>(
+    data.children.length === 0 ? "name" : null
+  );
   const [onboardName, setOnboardName] = useState("");
+  const [selectedPresets, setSelectedPresets] = useState<string[]>([]);
 
   // confirm chore complete
   const [confirmChore, setConfirmChore] = useState<Chore | null>(null);
@@ -124,13 +127,14 @@ const Index = () => {
     trackEvent("child_created", name);
   };
 
-  const handleOnboardAdd = () => {
-    if (onboardName.trim()) {
-      handleAddChild(onboardName.trim());
-      setOnboardName("");
-      setOnboardOpen(false);
-    }
-  };
+  const ONBOARD_PRESETS = [
+    { icon: "🎮", name: "Gaming",            totalQuota: 2, periodType: "weekly"  as const, durationMinutes: 60 },
+    { icon: "📺", name: "Screen Time",       totalQuota: 3, periodType: "weekly"  as const, durationMinutes: 30 },
+    { icon: "📱", name: "YouTube",           totalQuota: 3, periodType: "weekly"  as const, durationMinutes: 30 },
+    { icon: "🛏️", name: "Sleep with Parent", totalQuota: 1, periodType: "weekly"  as const },
+    { icon: "🍦", name: "Ice Cream",         totalQuota: 1, periodType: "monthly" as const },
+    { icon: "🛒", name: "Buy Something",     totalQuota: 1, periodType: "monthly" as const },
+  ];
 
   // Check if this is the very first token used across all activities
   const isFirstTokenEver = (child: typeof selectedChild) => {
@@ -286,51 +290,124 @@ const Index = () => {
     setEditingChore(null);
   };
 
-  // Onboarding empty state
-  if (!hasChildren) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
-        <div className="flex flex-col items-center gap-4 max-w-xs text-center">
-          <div className="animate-[ticketPop_400ms_ease-out]">
-            <div className="animate-[ticketFloat_4s_ease-in-out_600ms_infinite]">
-              <span className="text-7xl">🎟️</span>
+  // Onboarding 2-step flow
+  if (onboardStep === "name" || onboardStep === "pick") {
+    // Step 1: Name entry
+    if (onboardStep === "name") {
+      return (
+        <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
+          <div className="flex flex-col items-center gap-5 w-full max-w-xs text-center">
+            <div className="animate-[ticketPop_400ms_ease-out]">
+              <div className="animate-[ticketFloat_4s_ease-in-out_600ms_infinite]">
+                <span className="text-7xl">🎟️</span>
+              </div>
             </div>
-          </div>
-          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">
-            Toktok Token
-          </h1>
-          <p className="text-muted-foreground text-sm leading-relaxed">
-            Help your child learn that good things are worth waiting for.
-          </p>
-          <Button
-            onClick={() => setOnboardOpen(true)}
-            className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 font-bold h-12 text-base btn-press mt-2 transition-all duration-150 active:scale-[0.98]"
-          >
-            Get Started
-          </Button>
-        </div>
-
-        <Dialog open={onboardOpen} onOpenChange={setOnboardOpen}>
-          <DialogContent className="bg-card">
-            <DialogHeader>
-              <DialogTitle className="text-foreground">Add Child</DialogTitle>
-            </DialogHeader>
+            <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Toktok Token</h1>
+            <p className="text-muted-foreground text-sm">What's your child's name?</p>
             <Input
-              placeholder="Child's name"
+              placeholder="e.g. Aisha, Maheer..."
               value={onboardName}
               onChange={(e) => setOnboardName(e.target.value)}
-              className="rounded-xl bg-muted text-foreground"
-              onKeyDown={(e) => e.key === "Enter" && handleOnboardAdd()}
+              className="rounded-xl bg-muted text-foreground text-center text-base h-12"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && onboardName.trim()) {
+                  update(addChild(data, onboardName.trim()));
+                  setOnboardStep("pick");
+                }
+              }}
               autoFocus
             />
-            <Button onClick={handleOnboardAdd} className="rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 btn-press">
-              Add
+            <Button
+              onClick={() => {
+                if (!onboardName.trim()) return;
+                update(addChild(data, onboardName.trim()));
+                setOnboardStep("pick");
+              }}
+              disabled={!onboardName.trim()}
+              className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/80 font-bold h-12 text-base btn-press"
+            >
+              Next →
             </Button>
-          </DialogContent>
-        </Dialog>
-        <InstallPrompt />
-      </div>
-    );
+          </div>
+          <InstallPrompt />
+        </div>
+      );
+    }
+
+    // Step 2: Pick activities
+    if (onboardStep === "pick") {
+      const togglePreset = (name: string) => {
+        setSelectedPresets((prev) =>
+          prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]
+        );
+      };
+
+      const handleFinish = () => {
+        // Get the freshest data — selectedChild is set after addChild in step 1
+        const currentData = loadData();
+        const childId = currentData.selectedChildId;
+        const picked = ONBOARD_PRESETS.filter((p) => selectedPresets.includes(p.name));
+        let latest = currentData;
+        for (const preset of picked) {
+          latest = addActivity(latest, childId, preset);
+        }
+        update(latest);
+        trackEvent("onboarding_completed", onboardName.trim(), "", { activities_added: picked.length });
+        setOnboardStep(null);
+      };
+
+      return (
+        <div className="min-h-screen bg-background flex flex-col px-4 pt-10 pb-8">
+          <div className="max-w-lg mx-auto w-full flex flex-col gap-5 flex-1">
+            <div className="text-center">
+              <h2 className="text-xl font-extrabold text-foreground tracking-tight">
+                What do you want to limit for {onboardName.trim()}?
+              </h2>
+              <p className="text-muted-foreground text-sm mt-1">Tap to add. You can always change these later.</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              {ONBOARD_PRESETS.map((preset) => {
+                const isSelected = selectedPresets.includes(preset.name);
+                return (
+                  <button
+                    key={preset.name}
+                    onClick={() => togglePreset(preset.name)}
+                    className={`relative bg-card rounded-2xl p-4 border-2 flex flex-col items-center gap-1.5 btn-press transition-all ${
+                      isSelected
+                        ? "border-primary bg-primary/5 scale-[1.02]"
+                        : "border-border hover:bg-muted/40"
+                    }`}
+                  >
+                    {isSelected && (
+                      <span className="absolute top-2 right-2 bg-primary text-primary-foreground text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">✓</span>
+                    )}
+                    <span className="text-4xl leading-none">{preset.icon}</span>
+                    <span className="text-sm font-bold text-foreground">{preset.name}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {preset.totalQuota}x / {preset.periodType === "weekly" ? "week" : "month"}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="mt-auto pt-4">
+              <Button
+                onClick={handleFinish}
+                className={`w-full rounded-xl font-bold h-12 text-base btn-press transition-all ${
+                  selectedPresets.length > 0
+                    ? "bg-primary text-primary-foreground hover:bg-primary/80"
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {selectedPresets.length > 0 ? "Start using tokens →" : "Skip for now →"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      );
+    }
   }
 
   return (
