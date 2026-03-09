@@ -413,7 +413,7 @@ const Index = () => {
                   : "bg-muted text-muted-foreground"
               }`}
             >
-              ⭐ Earn
+              ⭐ Chores
             </button>
           </div>
         )}
