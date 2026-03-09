@@ -140,7 +140,7 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onStartTimer, 
         </div>
         <Progress
           value={progress}
-          className={`h-2 rounded-full bg-muted ${isEmpty ? "[&>div]:bg-destructive" : "[&>div]:bg-secondary"} [&>div]:rounded-full`}
+          className={`h-2 rounded-full bg-secondary ${isEmpty ? "[&>div]:bg-destructive" : "[&>div]:bg-muted/60"} [&>div]:rounded-full`}
         />
       </div>
 
