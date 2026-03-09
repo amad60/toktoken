@@ -113,6 +113,7 @@ export default function Card() {
   const handleInputSubmit = () => {
     if (!name.trim() || !birthDate) return;
     localStorage.setItem(CHILD_NAME_KEY, name.trim());
+    localStorage.setItem("childBirthdate", birthDate.toISOString());
     const months = calculateAgeMonths(birthDate);
     setAgeMonths(months);
     const ms = getMilestoneSet(months);
