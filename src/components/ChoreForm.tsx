@@ -60,7 +60,7 @@ export function ChoreForm({ open, onClose, onSave, onDelete, initial }: Props) {
                   key={e}
                   onClick={() => setIcon(e)}
                   className={`text-2xl w-11 h-11 rounded-lg flex items-center justify-center transition-colors btn-press ${
-                    icon === e ? "bg-primary/10 ring-2 ring-primary" : "bg-muted hover:bg-muted/70"
+                    icon === e ? "bg-primary/20 ring-2 ring-primary" : "hover:bg-muted"
                   }`}
                 >
                   {e}
