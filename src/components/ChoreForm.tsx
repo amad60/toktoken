@@ -50,17 +50,15 @@ export function ChoreForm({ open, onClose, onSave, onDelete, initial }: Props) {
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <div className="flex items-center gap-2">
-              <Label className="text-foreground text-sm font-semibold">Icon</Label>
-              <span className="text-3xl">{icon}</span>
-            </div>
+            <Label className="text-foreground text-sm font-semibold">Icon</Label>
             <div className="grid grid-cols-8 gap-1.5 mt-2">
               {CHORE_EMOJI_LIST.map((e) => (
                 <button
                   key={e}
                   onClick={() => setIcon(e)}
                   className={`text-2xl w-11 h-11 rounded-lg flex items-center justify-center transition-colors btn-press ${
-                    icon === e ? "bg-primary/20 ring-2 ring-primary" : "hover:bg-muted"
+                    icon === e ? "ring-2 ring-primary" : "hover:bg-muted"
+                  }`}
                   }`}
                 >
                   {e}
