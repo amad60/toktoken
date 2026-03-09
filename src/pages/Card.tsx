@@ -91,11 +91,21 @@ export default function Card() {
   }, [birthDate]);
 
   const handleStartFromLanding = () => {
-    const stored = localStorage.getItem(CHILD_NAME_KEY);
-    if (stored) {
-      setName(stored);
-      setScreen("input"); // still need birthdate
+    const storedName = localStorage.getItem(CHILD_NAME_KEY);
+    const storedBirth = localStorage.getItem("childBirthdate");
+    if (storedName) setName(storedName);
+    if (storedName && storedBirth) {
+      const bd = new Date(storedBirth);
+      setBirthDate(bd);
+      setAvatar(autoAvatar(storedName));
+      const months = calculateAgeMonths(bd);
+      setAgeMonths(months);
+      const ms = getMilestoneSet(months);
+      setMilestoneSet(ms);
+      setChecked(initCheckedMap(ms));
+      setScreen("checklist");
     } else {
+      if (storedName) setAvatar(autoAvatar(storedName));
       setScreen("input");
     }
   };
@@ -103,6 +113,7 @@ export default function Card() {
   const handleInputSubmit = () => {
     if (!name.trim() || !birthDate) return;
     localStorage.setItem(CHILD_NAME_KEY, name.trim());
+    localStorage.setItem("childBirthdate", birthDate.toISOString());
     const months = calculateAgeMonths(birthDate);
     setAgeMonths(months);
     const ms = getMilestoneSet(months);
@@ -195,15 +206,6 @@ export default function Card() {
             Buat Kartu Sekarang
           </button>
 
-          {/* Thumbnails */}
-          <div className="flex gap-3 mt-8 mb-6">
-            {["🐨", "🦊", "🐰"].map((av, i) => (
-              <div key={i} className="w-20 h-28 rounded-xl shadow flex flex-col items-center justify-center text-xs" style={{ backgroundColor: "#FFFDF7", border: "1px solid #F3E8D8" }}>
-                <span className="text-2xl mb-1">{av}</span>
-                <span style={{ color: "#A0856C" }}>{["3 bln", "12 bln", "24 bln"][i]}</span>
-              </div>
-            ))}
-          </div>
 
           {/* Footer */}
           <Link to="/" className="text-sm font-medium hover:underline" style={{ color: "#7DAA92" }}>
