@@ -132,7 +132,7 @@ export function ActivityCard({ activity, earnCredits, onUseToken, onStartTimer, 
       <div className="w-full space-y-1">
         <div className="flex justify-between text-xs">
           <span className="font-bold text-foreground">
-            {remainingQuota} / {totalQuota}
+            {usedQuota} of {totalQuota} used
           </span>
           <span className="text-muted-foreground text-[10px]">
             {getResetCountdown(periodType)}
