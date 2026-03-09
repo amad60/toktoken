@@ -13,7 +13,8 @@ import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import {
   getMilestoneSet, getCaption, calculateAgeMonths,
-  AVATARS, autoAvatar, type MilestoneSet, type Milestota/milestones";
+  AVATARS, autoAvatar, type MilestoneSet,
+} from "@/data/milestones";
 
 type Screen = "landing" | "input" | "checklist" | "preview" | "share";
 
