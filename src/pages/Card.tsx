@@ -195,15 +195,6 @@ export default function Card() {
             Buat Kartu Sekarang
           </button>
 
-          {/* Thumbnails */}
-          <div className="flex gap-3 mt-8 mb-6">
-            {["🐨", "🦊", "🐰"].map((av, i) => (
-              <div key={i} className="w-20 h-28 rounded-xl shadow flex flex-col items-center justify-center text-xs" style={{ backgroundColor: "#FFFDF7", border: "1px solid #F3E8D8" }}>
-                <span className="text-2xl mb-1">{av}</span>
-                <span style={{ color: "#A0856C" }}>{["3 bln", "12 bln", "24 bln"][i]}</span>
-              </div>
-            ))}
-          </div>
 
           {/* Footer */}
           <Link to="/" className="text-sm font-medium hover:underline" style={{ color: "#7DAA92" }}>
