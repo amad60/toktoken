@@ -21,7 +21,8 @@ const MAX_VISIBLE = 2;
 
 export function ActivityCard({ activity, earnCredits, onUseToken, onStartTimer, onUseEarnCredit, onViewHistory, onEdit, onTimerFinished }: Props) {
   const { icon, name, remainingQuota, totalQuota, durationText, durationMinutes, periodType } = activity;
-  const progress = totalQuota > 0 ? (remainingQuota / totalQuota) * 100 : 0;
+  const usedQuota = totalQuota - remainingQuota;
+  const progress = totalQuota > 0 ? (usedQuota / totalQuota) * 100 : 0;
   const isEmpty = remainingQuota === 0;
   const [confirmOpen, setConfirmOpen] = useState(false);
 
