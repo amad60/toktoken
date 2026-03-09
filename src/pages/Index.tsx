@@ -223,7 +223,12 @@ const Index = () => {
 
   // Activity CRUD
   const handleAddActivity = () => {
-    requireMath(() => { setEditingActivity(null); setFormOpen(true); });
+    if (selectedChild && selectedChild.activities.length === 0) {
+      setEditingActivity(null);
+      setFormOpen(true);
+    } else {
+      requireMath(() => { setEditingActivity(null); setFormOpen(true); });
+    }
   };
 
   const handleEditActivity = (activity: Activity) => {
