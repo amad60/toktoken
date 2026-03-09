@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useReft";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
@@ -13,8 +13,7 @@ import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import {
   getMilestoneSet, getCaption, calculateAgeMonths,
-  AVATARS, autoAvatar, type MilestoneSet, type MilestoneItem,
-} from "@/data/milestones";
+  AVATARS, autoAvatar, type MilestoneSet, type Milestota/milestones";
 
 type Screen = "landing" | "input" | "checklist" | "preview" | "share";
 
