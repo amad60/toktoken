@@ -91,11 +91,21 @@ export default function Card() {
   }, [birthDate]);
 
   const handleStartFromLanding = () => {
-    const stored = localStorage.getItem(CHILD_NAME_KEY);
-    if (stored) {
-      setName(stored);
-      setScreen("input"); // still need birthdate
+    const storedName = localStorage.getItem(CHILD_NAME_KEY);
+    const storedBirth = localStorage.getItem("childBirthdate");
+    if (storedName) setName(storedName);
+    if (storedName && storedBirth) {
+      const bd = new Date(storedBirth);
+      setBirthDate(bd);
+      setAvatar(autoAvatar(storedName));
+      const months = calculateAgeMonths(bd);
+      setAgeMonths(months);
+      const ms = getMilestoneSet(months);
+      setMilestoneSet(ms);
+      setChecked(initCheckedMap(ms));
+      setScreen("checklist");
     } else {
+      if (storedName) setAvatar(autoAvatar(storedName));
       setScreen("input");
     }
   };
