@@ -300,7 +300,8 @@ export default function Card() {
                     )}
                     style={{
                       backgroundColor: "#FDEBD0",
-                      ringColor: "#E8A87C",
+                      border: avatar === av ? "3px solid #E8A87C" : "3px solid transparent",
+                      boxShadow: avatar === av ? "0 0 0 2px #E8A87C40" : "none",
                     }}
                   >
                     {av}
