@@ -127,13 +127,14 @@ const Index = () => {
     trackEvent("child_created", name);
   };
 
-  const handleOnboardAdd = () => {
-    if (onboardName.trim()) {
-      handleAddChild(onboardName.trim());
-      setOnboardName("");
-      setOnboardOpen(false);
-    }
-  };
+  const ONBOARD_PRESETS = [
+    { icon: "🎮", name: "Gaming",            totalQuota: 2, periodType: "weekly"  as const, durationMinutes: 60 },
+    { icon: "📺", name: "Screen Time",       totalQuota: 3, periodType: "weekly"  as const, durationMinutes: 30 },
+    { icon: "📱", name: "YouTube",           totalQuota: 3, periodType: "weekly"  as const, durationMinutes: 30 },
+    { icon: "🛏️", name: "Sleep with Parent", totalQuota: 1, periodType: "weekly"  as const },
+    { icon: "🍦", name: "Ice Cream",         totalQuota: 1, periodType: "monthly" as const },
+    { icon: "🛒", name: "Buy Something",     totalQuota: 1, periodType: "monthly" as const },
+  ];
 
   // Check if this is the very first token used across all activities
   const isFirstTokenEver = (child: typeof selectedChild) => {
