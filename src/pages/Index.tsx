@@ -403,7 +403,7 @@ const Index = () => {
                   : "bg-muted text-muted-foreground"
               }`}
             >
-              Spend
+              🎯 Activities
             </button>
             <button
               onClick={() => setTab("earn")}
