@@ -176,10 +176,10 @@ export default function Card() {
             style={{ backgroundColor: "#FFFDF7", border: "1px solid #F3E8D8" }}
           >
             <div className="w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center text-3xl" style={{ backgroundColor: "#FDEBD0" }}>
-              🐻
+              🐨
             </div>
-            <p className="font-extrabold text-xl" style={{ color: "#5C4033" }}>Maheer</p>
-            <p className="text-sm mt-1" style={{ color: "#A0856C" }}>8 Bulan Hari Ini 🌱</p>
+            <p className="font-extrabold text-xl" style={{ color: "#5C4033" }}>Nama Si Kecil</p>
+            <p className="text-sm mt-1" style={{ color: "#A0856C" }}>Usia</p>
             <div className="mt-4 rounded-xl p-3 text-left text-sm space-y-1.5" style={{ backgroundColor: "#FFFDF7", color: "#5C4033" }}>
               <p>🏃 Duduk dengan sedikit bantuan</p>
               <p>✋ Mengulurkan tangan meraih benda</p>
