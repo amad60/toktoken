@@ -1,16 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { format } from "date-fns";
-import { id as idLocale } from "date-fns/locale";
 import confetti from "canvas-confetti";
 import html2canvas from "html2canvas";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { CalendarIcon } from "lucide-react";
+import { toast } from "sonner";
 import {
   getMilestoneSet, getCaption, calculateAgeMonths,
   AVATARS, autoAvatar, type MilestoneSet,
@@ -19,8 +16,14 @@ import {
 type Screen = "landing" | "input" | "checklist" | "preview" | "share";
 
 const CHILD_NAME_KEY = "childName";
+const CHILD_BIRTH_KEY = "childBirthdate";
+const LAST_MILESTONES_KEY = "lastCardMilestones";
 
-// Checked state: key = "domain-itemIdx"
+const MONTHS_ID = [
+  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+  "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+];
+
 type CheckedMap = Record<string, boolean>;
 
 function initCheckedMap(ms: MilestoneSet): CheckedMap {
@@ -44,14 +47,12 @@ function getHighlightItems(
 ): { icon: string; text: string }[] {
   const results: { icon: string; text: string }[] = [];
   ms.domains.forEach((d, di) => {
-    // First pick checked star items
     const starItems = d.items
       .map((item, ii) => ({ item, ii }))
       .filter(({ item, ii }) => item.star && checked[`${di}-${ii}`]);
     if (starItems.length > 0) {
       results.push({ icon: d.icon, text: starItems[0].item.text });
     } else {
-      // fallback: first checked non-star
       const fallback = d.items
         .map((item, ii) => ({ item, ii }))
         .filter(({ item, ii }) => !item.star && checked[`${di}-${ii}`]);
@@ -72,15 +73,53 @@ export default function Card() {
   const [milestoneSet, setMilestoneSet] = useState<MilestoneSet | null>(null);
   const [checked, setChecked] = useState<CheckedMap>({});
   const [cardFormat, setCardFormat] = useState<"9:16" | "1:1">("9:16");
+  const [isReturningUser, setIsReturningUser] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // Check localStorage for existing child name
+  // Dropdown state for birthdate
+  const [birthDay, setBirthDay] = useState("");
+  const [birthMonth, setBirthMonth] = useState("");
+  const [birthYear, setBirthYear] = useState("");
+
+  // On mount: check if returning user has a saved card
   useEffect(() => {
-    const stored = localStorage.getItem(CHILD_NAME_KEY);
-    if (stored) {
-      setName(stored);
+    const storedName = localStorage.getItem(CHILD_NAME_KEY);
+    const storedBirth = localStorage.getItem(CHILD_BIRTH_KEY);
+    const storedMilestones = localStorage.getItem(LAST_MILESTONES_KEY);
+
+    if (storedName && storedBirth && storedMilestones) {
+      // Returning user: restore card and go straight to preview
+      setName(storedName);
+      const bd = new Date(storedBirth);
+      setBirthDate(bd);
+      setAvatar(autoAvatar(storedName));
+      const months = calculateAgeMonths(bd);
+      setAgeMonths(months);
+      const ms = getMilestoneSet(months);
+      setMilestoneSet(ms);
+      try {
+        setChecked(JSON.parse(storedMilestones));
+      } catch {
+        setChecked(initCheckedMap(ms));
+      }
+      setIsReturningUser(true);
+      setScreen("preview");
+    } else if (storedName) {
+      setName(storedName);
     }
   }, []);
+
+  // Sync birthDate from dropdowns
+  useEffect(() => {
+    if (birthDay && birthMonth && birthYear) {
+      const d = new Date(parseInt(birthYear), parseInt(birthMonth), parseInt(birthDay));
+      if (!isNaN(d.getTime())) {
+        setBirthDate(d);
+      }
+    } else {
+      setBirthDate(undefined);
+    }
+  }, [birthDay, birthMonth, birthYear]);
 
   // Auto-update age when birthDate changes
   useEffect(() => {
@@ -92,7 +131,7 @@ export default function Card() {
 
   const handleStartFromLanding = () => {
     const storedName = localStorage.getItem(CHILD_NAME_KEY);
-    const storedBirth = localStorage.getItem("childBirthdate");
+    const storedBirth = localStorage.getItem(CHILD_BIRTH_KEY);
     if (storedName) setName(storedName);
     if (storedName && storedBirth) {
       const bd = new Date(storedBirth);
@@ -113,7 +152,7 @@ export default function Card() {
   const handleInputSubmit = () => {
     if (!name.trim() || !birthDate) return;
     localStorage.setItem(CHILD_NAME_KEY, name.trim());
-    localStorage.setItem("childBirthdate", birthDate.toISOString());
+    localStorage.setItem(CHILD_BIRTH_KEY, birthDate.toISOString());
     const months = calculateAgeMonths(birthDate);
     setAgeMonths(months);
     const ms = getMilestoneSet(months);
@@ -127,6 +166,9 @@ export default function Card() {
   };
 
   const handleChecklistDone = () => {
+    // Save milestones to localStorage for returning users
+    localStorage.setItem(LAST_MILESTONES_KEY, JSON.stringify(checked));
+    setIsReturningUser(false);
     setScreen("preview");
   };
 
@@ -145,6 +187,15 @@ export default function Card() {
     setScreen("share");
   };
 
+  const handleRestartFlow = () => {
+    // Clear saved card data, keep name/birthdate
+    localStorage.removeItem(LAST_MILESTONES_KEY);
+    setIsReturningUser(false);
+    setChecked({});
+    setMilestoneSet(null);
+    setScreen("input");
+  };
+
   const shareWhatsApp = () => {
     const highlights = milestoneSet ? getHighlightItems(milestoneSet, checked) : [];
     const firstHL = highlights.length > 0 ? highlights[0].text : "banyak hal baru";
@@ -156,8 +207,16 @@ export default function Card() {
     window.open("instagram://camera", "_blank");
   };
 
+  const handleSaveToToken = () => {
+    toast(`Milestone ${name} tersimpan! 💛`);
+  };
+
   const uncheckedCount = Object.values(checked).filter((v) => !v).length;
   const { checked: checkedCount, total } = countChecked(checked);
+
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: currentYear - 2018 + 1 }, (_, i) => 2018 + i);
+  const days = Array.from({ length: 31 }, (_, i) => i + 1);
 
   // ─── SCREEN: LANDING ─────────────────────────────────────
   if (screen === "landing") {
@@ -250,41 +309,50 @@ export default function Card() {
                   setName(v);
                   setAvatar(autoAvatar(v));
                 }}
-                placeholder="contoh: Maheer"
+                placeholder="contoh: Anak"
                 maxLength={12}
                 className="rounded-xl border-none shadow-sm"
                 style={{ backgroundColor: "#FFFDF7" }}
               />
             </div>
 
-            {/* Birth date */}
+            {/* Birth date - 3 dropdowns */}
             <div>
               <label className="text-sm font-semibold block mb-1.5" style={{ color: "#5C4033" }}>Tanggal lahir</label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal rounded-xl border-none shadow-sm",
-                      !birthDate && "text-muted-foreground"
-                    )}
-                    style={{ backgroundColor: "#FFFDF7" }}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {birthDate ? format(birthDate, "dd MMMM yyyy", { locale: idLocale }) : "Pilih tanggal lahir"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={birthDate}
-                    onSelect={setBirthDate}
-                    disabled={(date) => date > new Date() || date < new Date("2018-01-01")}
-                    initialFocus
-                    className={cn("p-3 pointer-events-auto")}
-                  />
-                </PopoverContent>
-              </Popover>
+              <div className="flex gap-2">
+                <Select value={birthDay} onValueChange={setBirthDay}>
+                  <SelectTrigger className="flex-1 rounded-xl border-none shadow-sm" style={{ backgroundColor: "#FFFDF7" }}>
+                    <SelectValue placeholder="Hari" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {days.map((d) => (
+                      <SelectItem key={d} value={String(d)}>{d}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={birthMonth} onValueChange={setBirthMonth}>
+                  <SelectTrigger className="flex-[1.5] rounded-xl border-none shadow-sm" style={{ backgroundColor: "#FFFDF7" }}>
+                    <SelectValue placeholder="Bulan" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MONTHS_ID.map((m, i) => (
+                      <SelectItem key={i} value={String(i)}>{m}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={birthYear} onValueChange={setBirthYear}>
+                  <SelectTrigger className="flex-1 rounded-xl border-none shadow-sm" style={{ backgroundColor: "#FFFDF7" }}>
+                    <SelectValue placeholder="Tahun" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {years.map((y) => (
+                      <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
               {birthDate && name && (
                 <p className="text-sm mt-2 font-semibold" style={{ color: "#7DAA92" }}>
@@ -408,14 +476,8 @@ export default function Card() {
             className="w-full py-3.5 text-base font-bold rounded-full text-white shadow-md mt-6 btn-press"
             style={{ backgroundColor: "#E8A87C" }}
           >
-            Buat Kartunya 🌸 →
+            Lihat Hasil Tumbuh Kembangnya 🌱 →
           </button>
-
-          <div className="text-center mt-4">
-            <Link to="/" className="text-xs hover:underline" style={{ color: "#7DAA92" }}>
-              🎯 Coba TokTok Token
-            </Link>
-          </div>
         </div>
       </div>
     );
@@ -430,7 +492,7 @@ export default function Card() {
       <div className="min-h-screen flex flex-col items-center" style={{ backgroundColor: "#FFF8F0" }}>
         <div className="w-full max-w-[430px] mx-auto px-5 py-6">
           <h2 className="font-extrabold text-lg text-center mb-4" style={{ color: "#5C4033" }}>
-            Kartu Milestone {name} 🌸
+            Kartu Milestone {name} 🌿
           </h2>
 
           {/* The Card */}
@@ -442,13 +504,14 @@ export default function Card() {
             )}
             style={{ backgroundColor: "#FFF8F0" }}
           >
-            {/* Floral corners */}
-            <div className="absolute top-0 left-0 w-24 h-24 opacity-30 pointer-events-none" style={{
-              background: "radial-gradient(circle at 20% 20%, #F4B8C1 0%, transparent 60%), radial-gradient(circle at 60% 40%, #B5D8C2 0%, transparent 50%)",
-            }} />
-            <div className="absolute bottom-0 right-0 w-24 h-24 opacity-30 pointer-events-none" style={{
-              background: "radial-gradient(circle at 80% 80%, #F4B8C1 0%, transparent 60%), radial-gradient(circle at 40% 60%, #B5D8C2 0%, transparent 50%)",
-            }} />
+            {/* Stars & leaf corners - gender neutral */}
+            <div className="absolute top-3 left-3 opacity-20 pointer-events-none text-2xl">✨🍃</div>
+            <div className="absolute top-3 right-3 opacity-20 pointer-events-none text-2xl">🍃✨</div>
+            <div className="absolute bottom-3 left-3 opacity-20 pointer-events-none text-2xl">🌿⭐</div>
+            <div className="absolute bottom-3 right-3 opacity-20 pointer-events-none text-2xl">⭐🌿</div>
+            {/* Subtle star scatter */}
+            <div className="absolute top-1/4 right-6 opacity-10 pointer-events-none text-lg">✦</div>
+            <div className="absolute bottom-1/4 left-6 opacity-10 pointer-events-none text-lg">✦</div>
 
             <div className="relative z-10 flex flex-col items-center px-6 py-8 w-full">
               {/* Avatar */}
@@ -495,22 +558,53 @@ export default function Card() {
             ))}
           </div>
 
-          {/* Cross-promo */}
-          <Link
-            to="/"
-            className="block rounded-xl p-3 mt-4 text-center text-sm font-medium"
+          {/* Cross-promo: toast instead of navigate */}
+          <button
+            onClick={handleSaveToToken}
+            className="block w-full rounded-xl p-3 mt-4 text-center text-sm font-medium"
             style={{ backgroundColor: "#E8F4FD", color: "#4A90D9" }}
           >
             Simpan semua milestone {name} di TokTok Token 🎯 →
-          </Link>
-
-          <button
-            onClick={handleDownload}
-            className="w-full py-3.5 text-base font-bold rounded-full text-white shadow-md mt-4 btn-press"
-            style={{ backgroundColor: "#E8A87C" }}
-          >
-            Lanjut Bagikan →
           </button>
+
+          {isReturningUser ? (
+            <>
+              {/* Returning user: two action buttons */}
+              <button
+                onClick={() => setScreen("share")}
+                className="w-full py-3.5 text-base font-bold rounded-full text-white shadow-md mt-4 btn-press"
+                style={{ backgroundColor: "#E8A87C" }}
+              >
+                📤 Bagikan Kartu
+              </button>
+              <button
+                onClick={handleRestartFlow}
+                className="w-full py-3 text-sm font-semibold rounded-full mt-3 btn-press"
+                style={{ backgroundColor: "#FFFDF7", color: "#5C4033", border: "1px solid #F3E8D8" }}
+              >
+                ← Buat Kartu Baru
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={handleDownload}
+                className="w-full py-3.5 text-base font-bold rounded-full text-white shadow-md mt-4 btn-press"
+                style={{ backgroundColor: "#E8A87C" }}
+              >
+                Lanjut Bagikan →
+              </button>
+              <div className="text-center mt-4">
+                <button
+                  onClick={handleRestartFlow}
+                  className="text-xs hover:underline"
+                  style={{ color: "#A0856C" }}
+                >
+                  ← Buat kartu baru
+                </button>
+              </div>
+            </>
+          )}
 
           <div className="text-center mt-4">
             <Link to="/" className="text-xs hover:underline" style={{ color: "#7DAA92" }}>
@@ -574,11 +668,11 @@ export default function Card() {
 
           <div className="text-center mt-6">
             <button
-              onClick={() => setScreen("landing")}
+              onClick={handleRestartFlow}
               className="text-xs hover:underline"
               style={{ color: "#A0856C" }}
             >
-              ← Buat kartu lagi
+              ← Buat kartu baru
             </button>
           </div>
 
