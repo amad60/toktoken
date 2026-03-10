@@ -170,21 +170,24 @@ export default function Card() {
             <h2 className="font-extrabold text-lg mt-1" style={{ color: "#5C4033" }}>TokTok Tumbuh</h2>
           </div>
 
+          {/* Label above example card */}
+          <p className="text-sm text-center mb-3" style={{ color: "#A0856C" }}>Begini kartu yang akan kamu dapat 💛</p>
+
           {/* Example Card */}
           <div
             className="w-full rounded-2xl shadow-lg p-6 mb-6 text-center"
             style={{ backgroundColor: "#FFFDF7", border: "1px solid #F3E8D8" }}
           >
             <div className="w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center text-3xl" style={{ backgroundColor: "#FDEBD0" }}>
-              🐨
+              🐰
             </div>
-            <p className="font-extrabold text-xl" style={{ color: "#5C4033" }}>Nama Si Kecil</p>
-            <p className="text-sm mt-1" style={{ color: "#A0856C" }}>Usia</p>
+            <p className="font-extrabold text-xl" style={{ color: "#5C4033" }}>Adira</p>
+            <p className="text-sm mt-1" style={{ color: "#A0856C" }}>12 Bulan Hari Ini 🌱</p>
             <div className="mt-4 rounded-xl p-3 text-left text-sm space-y-1.5" style={{ backgroundColor: "#FFFDF7", color: "#5C4033" }}>
-              <p>🏃 Duduk dengan sedikit bantuan</p>
-              <p>✋ Mengulurkan tangan meraih benda</p>
-              <p>💬 Bersuara menarik perhatian</p>
-              <p>🤝 Menoleh mencari suara</p>
+              <p>🏃 Berjalan beberapa langkah sendiri</p>
+              <p>✋ Memasukkan benda ke wadah</p>
+              <p>💬 Memanggil mama/papa dengan tepat</p>
+              <p>🤝 Melambaikan tangan dadah</p>
             </div>
             <p className="text-xs mt-3" style={{ color: "#C4A882" }}>TokTok 💛 toktoken.lovable.app/card</p>
           </div>
@@ -206,11 +209,12 @@ export default function Card() {
             Buat Kartu Sekarang
           </button>
 
-
           {/* Footer */}
-          <Link to="/" className="text-sm font-medium hover:underline" style={{ color: "#7DAA92" }}>
-            Coba juga TokTok Token 🎯
-          </Link>
+          <div className="mt-10 pt-4">
+            <Link to="/" className="text-sm font-medium hover:underline" style={{ color: "#7DAA92" }}>
+              Coba juga TokTok Token 🎯
+            </Link>
+          </div>
         </div>
       </div>
     );
